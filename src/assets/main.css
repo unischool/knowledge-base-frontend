@@ -23,6 +23,13 @@ a,
 .small-spacer {
   height: 2rem;
 }
+.no-border {
+  border: none !important;
+}
+
+a, button {
+  cursor: pointer;
+}
 /* 
 @media (min-width: 1024px) {
   body {
