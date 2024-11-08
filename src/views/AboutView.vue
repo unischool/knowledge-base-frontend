@@ -4,20 +4,21 @@ div
 
   table.ui.celled.stackable.table
     thead
-      th ID
-      th 課程類別
-      th 課程名稱
-      th 課程描述
-      th 建立資料日期
-      th 更新資料日期
-  tbody
-    tr(v-for="item in data" :key="item.id")
-      td {{ item.id }}
-      td {{ item.course_type }}
-      td {{ item.title }}
-      td {{ item.description }}
-      td {{ item.created_at }}
-      td {{ item.updated_at }}
+      tr
+        th ID
+        th 課程類別
+        th 課程名稱
+        th 課程描述
+        th 建立資料日期
+        th 更新資料日期
+    tbody
+      tr(v-for="item in data" :key="item.id")
+        td {{ item.id }}
+        td {{ item.course_type }}
+        td {{ item.title }}
+        td {{ item.description }}
+        td {{ item.created_at }}
+        td {{ item.updated_at }}
 </template>
 
 <script lang="ts">
@@ -31,7 +32,7 @@ export default {
   },
   mounted() {
     // 在組件掛載時發送請求
-    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/Courses')
+    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/Courses')
       .then(response => {
         console.log(response.data); // 檢查資料格式
         this.data = response.data
