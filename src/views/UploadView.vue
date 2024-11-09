@@ -5,6 +5,8 @@
       input(type="file" @change="handleFileChange" required)
       input(type="password" v-model="password" placeholder="Enter password" required)
       button.ui.button(type="submit") Upload
+    .ui.dimmer.active(v-if="uploading")
+      .ui.loader
   </div>
 </template>
 
@@ -16,7 +18,8 @@ export default {
   data() {
     return {
       file: null,
-      password: ''
+      password: '',
+      uploading: false
     };
   },
   methods: {
@@ -42,17 +45,21 @@ export default {
       formData.append('type', this.file.type);
 
       try {
+        this.uploading = true;
         const response = await axios.post('https://knowledge-base-backend.leechiuhui.workers.dev/write_file', formData);
 
         if (response.status === 200) {
           alert('File uploaded successfully!');
+          this.uploading = false;
           this.$emit('fileUploaded');
         } else {
           alert('Failed to upload file.');
+          this.uploading = false;
         }
       } catch (error) {
         console.error('Error uploading file:', error);
         alert('An error occurred while uploading the file.');
+        this.uploading = false;
       }
     }
   }
