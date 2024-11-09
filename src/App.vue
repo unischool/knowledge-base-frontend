@@ -3,8 +3,9 @@ header
   nav.ui.fixed.top.menu
     button.no-border.ui.item(@click="toggleSidebar")
       i.icon.bars
-    RouterLink.item(to="/") Home
-    RouterLink.item(to="/about") About
+    RouterLink.item(to="/") 首頁
+    RouterLink.item(to="/about") 關於我們
+    RouterLink.item(to="/upload") 上傳文件
 .small-spacer
 .ui.sidebar.vertical.menu#side-menu(:class="{'hidden': !sidebarVisible}")
   RouterLink.item(to='/', exact='', name="home")
@@ -13,10 +14,13 @@ header
   RouterLink.item(to='/about', name="about")
     i.info.icon
     | 關於我們
+  RouterLink.item(to='/upload', name="upload")
+    i.upload.icon
+    | 上傳文件
 .ui.sidebar.bg(:class="{'hidden': !sidebarVisible}", @click="toggleSidebar")
 
 .ui.container
-  RouterView(:courses="courses" :keywordsWithFiles="keywordsWithFiles")
+  RouterView(:courses="courses" :keywordsWithFiles="keywordsWithFiles", @fileUploaded="handleFileUploaded")
 </template>
 
 <script lang="ts">
@@ -51,6 +55,11 @@ export default defineComponent({
   methods: {
     toggleSidebar() {
       this.sidebarVisible = !this.sidebarVisible
+    },
+    handleFileUploaded() {
+      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/keywordsWithFiles').then((response) => {
+        this.keywordsWithFiles = response.data
+      })
     }
   }
 })
