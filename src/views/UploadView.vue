@@ -16,8 +16,7 @@ export default {
   data() {
     return {
       file: null,
-      password: '',
-      keywords: ''
+      password: ''
     };
   },
   methods: {
@@ -27,13 +26,7 @@ export default {
         alert('No file selected.');
         return;
       }
-      try {
-        const response = await axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generate_keywords_by_file/');
-        this.keywords = response.data;
-      } catch (error) {
-        console.error('Error fetching keywords:', error);
-        alert('An error occurred while fetching keywords.');
-      }
+      
     },
 
     async handleSubmit() {
@@ -42,17 +35,11 @@ export default {
         return;
       }
 
-      if (!this.keywords) {
-        alert('No keywords found. Please try again.');
-        return;
-      }
-
       const formData = new FormData();
       formData.append('file', this.file);
       formData.append('password', this.password);
-      formData.append('fileName', this.file.name);
-      formData.append('fileType', this.file.type);
-      formData.append('keywords', this.keywords);
+      formData.append('filename', this.file.name);
+      formData.append('type', this.file.type);
 
       try {
         const response = await axios.post('https://knowledge-base-backend.leechiuhui.workers.dev/write_file', formData);
