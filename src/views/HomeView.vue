@@ -1,9 +1,64 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
+<template lang="pug">
+  main
+    //- <TheWelcome />
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
+    .ui.form.container
+      .ui.field
+        .ui.search.icon.input
+          input(v-model="mySearch", placeholder="Search...", @input="handleSearch")
+          i.search.icon
+
+    .ui.segment.container
+      button.keyword.ui.button(v-for="keyword in keywordsWithFiles", @click="handleClick(keyword)", v-show="mySearch.length > 0 && keyword.keyword.includes(mySearch)")
+        | {{ keyword.keyword }}
+
+    div.ui.segment
+      div.ui.header(v-if="selectedKeyword.keyword") 和 {{ selectedKeyword.keyword }} 相關的文件
+      div.ui.list
+        div.ui.item(v-for="file in selectedKeyword.files")
+          button.ui.button(@click="handleFileClick(file)") {{ file }}
+
 </template>
+
+
+<script lang="ts">
+
+import { defineComponent } from 'vue'
+import axios from 'axios'
+// import TheWelcome from '../components/TheWelcome.vue'
+
+export default defineComponent({
+  name: 'HomeView',
+  data() {
+    return {
+      selectedKeyword: {
+        keyword: '',
+        files: [],
+      },
+      keywordsWithFiles: [],
+      mySearch: '',
+    }
+  },
+  mounted() {
+    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/keywordsWithFiles').then((response) => {
+      this.keywordsWithFiles = response.data
+    })
+  },
+  methods: {
+    handleSearch() {
+      console.log(this.mySearch)
+      this.selectedKeyword = {
+        keyword: '',
+        files: [],
+      }
+    },
+    handleClick(keyword: any) {
+      this.selectedKeyword = keyword
+    },
+    handleFileClick(file: string) {
+      console.log(file)
+      window.open(`https://knowledge-base-backend.leechiuhui.workers.dev/file/${file}`, '_blank')
+    },
+  },
+})
+</script>
