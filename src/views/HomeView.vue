@@ -2,6 +2,8 @@
   main
     //- <TheWelcome />
 
+    h1.ui.header 至青宇宙學校知識庫
+
     .ui.form.container
       .ui.field
         .ui.search.icon.input
