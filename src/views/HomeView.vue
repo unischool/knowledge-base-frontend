@@ -8,11 +8,11 @@
           input(v-model="mySearch", placeholder="Search...", @input="handleSearch")
           i.search.icon
 
-    .ui.segment.container
+    .ui.segment.container(v-if="mySearch.length > 0 && keywordsWithFiles.filter((keyword) => keyword.keyword.includes(mySearch)).length > 0")
       button.keyword.ui.button(v-for="keyword in keywordsWithFiles", @click="handleClick(keyword)", v-show="mySearch.length > 0 && keyword.keyword.includes(mySearch)")
         | {{ keyword.keyword }}
 
-    div.ui.segment
+    div.ui.segment(v-if="selectedKeyword.keyword")
       div.ui.header(v-if="selectedKeyword.keyword") 和 {{ selectedKeyword.keyword }} 相關的文件
       div.ui.list
         div.ui.item(v-for="file in selectedKeyword.files")
