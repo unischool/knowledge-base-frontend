@@ -13,10 +13,10 @@
         | {{ keyword.keyword }}
 
     div.ui.segment(v-if="selectedKeyword.keyword")
-      div.ui.header(v-if="selectedKeyword.keyword") 和 {{ selectedKeyword.keyword }} 相關的文件
+      div.ui.header(v-if="selectedKeyword.keyword") 和 {{ selectedKeyword.keyword }} 相關的文件：
       div.ui.list
         div.ui.item(v-for="file in selectedKeyword.files")
-          button.ui.button(@click="handleFileClick(file)") {{ file }}
+          button.ui.basic.purple.button(@click="handleFileClick(file)") {{ file }}
 
 </template>
 
@@ -24,25 +24,24 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import axios from 'axios'
 // import TheWelcome from '../components/TheWelcome.vue'
 
 export default defineComponent({
   name: 'HomeView',
+  props: {
+    keywordsWithFiles: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       selectedKeyword: {
         keyword: '',
         files: [],
       },
-      keywordsWithFiles: [],
       mySearch: '',
     }
-  },
-  mounted() {
-    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/keywordsWithFiles').then((response) => {
-      this.keywordsWithFiles = response.data
-    })
   },
   methods: {
     handleSearch() {

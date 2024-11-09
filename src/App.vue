@@ -16,18 +16,37 @@ header
 .ui.sidebar.bg(:class="{'hidden': !sidebarVisible}", @click="toggleSidebar")
 
 .ui.container
-  RouterView
+  RouterView(:courses="courses" :keywordsWithFiles="keywordsWithFiles")
 </template>
 
 <script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import { defineComponent, ref } from 'vue'
+import axios from 'axios'
+
 
 export default defineComponent({
   setup() {
     const sidebarVisible = ref(false)
-    return { sidebarVisible }
+    const courses = ref([])
+    const keywordsWithFiles = ref([])
+    return { sidebarVisible, courses, keywordsWithFiles }
+  },
+  mounted() {
+    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/Courses')
+      .then(response => {
+        this.courses = response.data
+      })
+      .catch(error => {
+        console.error('出錯了', error)
+      })
+    
+    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/keywordsWithFiles').then((response) => {
+      this.keywordsWithFiles = response.data
+    }).catch(error => {
+      console.error('出錯了', error)
+    })
   },
   methods: {
     toggleSidebar() {

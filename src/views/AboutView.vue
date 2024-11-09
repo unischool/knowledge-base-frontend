@@ -12,7 +12,7 @@ div
         th 建立資料日期
         th 更新資料日期
     tbody
-      tr(v-for="item in data" :key="item.id")
+      tr(v-for="item in courses" :key="item.id")
         td {{ item.id }}
         td {{ item.course_type }}
         td {{ item.title }}
@@ -25,21 +25,15 @@ div
 import axios from 'axios'
 
 export default {
+  props: {
+    courses: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      data: [],
     }
-  },
-  mounted() {
-    // 在組件掛載時發送請求
-    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/Courses')
-      .then(response => {
-        console.log(response.data); // 檢查資料格式
-        this.data = response.data
-      })
-      .catch(error => {
-        console.error('出錯了', error)
-      })
   }
 }
 </script>
