@@ -32,7 +32,7 @@ export default {
   },
   mounted() {
     // 在組件掛載時發送請求
-    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/Courses')
+    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/Courses')
       .then(response => {
         console.log(response.data); // 檢查資料格式
         this.data = response.data
