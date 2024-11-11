@@ -4,6 +4,7 @@ header
     button.no-border.ui.item(@click="toggleSidebar")
       i.icon.bars
     RouterLink.item(to="/") 首頁
+    RouterLink.item(to="/ai") 與AI對話
     RouterLink.item(to="/about") 關於我們
     RouterLink.item(to="/upload") 上傳文件
 .small-spacer
@@ -11,6 +12,9 @@ header
   RouterLink.item(to='/', exact='', name="home")
     i.home.icon
     | 首頁
+  RouterLink.item(to='/ai', name="ai")
+    i.ai.icon
+    | 與AI對話
   RouterLink.item(to='/about', name="about")
     i.info.icon
     | 關於我們
@@ -45,7 +49,7 @@ export default defineComponent({
       .catch(error => {
         console.error('出錯了', error)
       })
-    
+
     axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/keywordsWithFiles').then((response) => {
       this.keywordsWithFiles = response.data
     }).catch(error => {
