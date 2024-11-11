@@ -10,5 +10,16 @@
     {
       "path": "./nightwatch/tsconfig.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "esnext",
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
+  }
 }
+
+
