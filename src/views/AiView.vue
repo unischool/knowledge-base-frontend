@@ -3,9 +3,13 @@
     h1.ui.header AI 知識庫對話
     .ui.segment
       .ui.input
-        input(type="text" placeholder="與AI對話...", v-model="message")
-        button.ui.button(@click="sendMessage", @keyup.enter="sendMessage") 送出
+        //- input(type="text" placeholder="與AI對話...", v-model="message")
+        //- button.ui.button(@click="sendMessage", @keyup.enter="sendMessage") 送出
+        input(autofocus type="text" placeholder="與AI對話...", v-model="message", @keyup.enter="sendMessage")
+        button.ui.button(@click="sendMessage") 送出
       .result
+        //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
+        //- p(v-else-if="result !== ''") {{ parseResult(result) }}
         p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
         p(v-else-if="result !== ''") {{ parseResult(result) }}
 </template>
