@@ -3,24 +3,32 @@ header
   nav.ui.fixed.top.menu
     button.no-border.ui.item(@click="toggleSidebar")
       i.icon.bars
-    RouterLink.item(to="/") 首頁
-    RouterLink.item(to="/ai") 與AI對話
-    RouterLink.item(to="/about") 關於我們
-    RouterLink.item(to="/upload") 上傳文件
+    RouterLink.item(to="/") 首頁-文件搜尋
+    RouterLink.item(to="/ai") AI機器人-創源工具RAG
+    RouterLink.item(to="/ai-rag") AI機器人-學校課程RAG
+    RouterLink.item(to="/faq") FAQ
+    RouterLink.item(to="/about") ABOUT
+    RouterLink.item(to="/upload") 後台-上傳
 .small-spacer
 .ui.sidebar.vertical.menu#side-menu(:class="{'hidden': !sidebarVisible}")
   RouterLink.item(to='/', exact='', name="home")
     i.home.icon
-    | 首頁
+    | 首頁-文件搜尋
   RouterLink.item(to='/ai', name="ai")
     i.ai.icon
-    | 與AI對話
+    | AI機器人-創源工具RAG
+  RouterLink.item(to='/ai-rag', name="ai-rag")
+    i.ai.icon
+    | AI機器人-學校課程RAG
+  RouterLink.item(to='/faq', name="faq")
+    i.help.icon
+    | FAQ
   RouterLink.item(to='/about', name="about")
     i.info.icon
-    | 關於我們
+    | ABOUT
   RouterLink.item(to='/upload', name="upload")
     i.upload.icon
-    | 上傳文件
+    | 後台-上傳
 .ui.sidebar.bg(:class="{'hidden': !sidebarVisible}", @click="toggleSidebar")
 
 .ui.container
