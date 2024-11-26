@@ -1,11 +1,10 @@
 <template lang="pug">
   main
-    h1.ui.header AI 知識庫對話
-    .ui.segment
+    h1.ui.header Drago測試
+    .ui.segment 輸入創源工具問題和R2資料庫文件做向量比對，取最相似(餘弦相似度>0.85)的文件內容回傳
+      p 請輸入問題
       .ui.input
-        //- input(type="text" placeholder="與AI對話...", v-model="message")
-        //- button.ui.button(@click="sendMessage", @keyup.enter="sendMessage") 送出
-        input(autofocus type="text" placeholder="與AI對話...", v-model="message", @keyup.enter="sendMessage")
+        input(autofocus type="text" placeholder="請輸入問題..", v-model="message", @keyup.enter="sendMessage")
         button.ui.button(@click="sendMessage") 送出
       .result
         //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
@@ -19,7 +18,7 @@ import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 
 export default defineComponent({
-  name: 'AiView',
+  name: 'DragoTestingView',
   setup() {
     const message = ref('');
     const result = ref('');
@@ -34,7 +33,7 @@ export default defineComponent({
         message.value += '？';
       }
 
-      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/ai/' + message.value, {
+      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generateKeywords/' + message.value, {
         headers: {
           'Content-Type': 'application/json',
         },

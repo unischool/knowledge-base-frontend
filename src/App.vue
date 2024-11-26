@@ -4,6 +4,7 @@ header
     button.no-border.ui.item(@click="toggleSidebar")
       i.icon.bars
     RouterLink.item(to="/") 首頁-文件搜尋
+    RouterLink.item(to="/dragotesting") Drago測試
     RouterLink.item(to="/ai") AI機器人-創源工具RAG
     RouterLink.item(to="/ai-rag") AI機器人-學校課程RAG
     RouterLink.item(to="/faq") FAQ
@@ -14,6 +15,9 @@ header
   RouterLink.item(to='/', exact='', name="home")
     i.home.icon
     | 首頁-文件搜尋
+  RouterLink.item(to='/dragotesting', name="dragotesting")
+    i.dragTesting.icon
+    | Drago測試
   RouterLink.item(to='/ai', name="ai")
     i.ai.icon
     | AI機器人-創源工具RAG

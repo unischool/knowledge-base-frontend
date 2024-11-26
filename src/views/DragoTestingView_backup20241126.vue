@@ -1,17 +1,14 @@
 <template lang="pug">
   main
-    h1.ui.header AI 知識庫對話
-    .ui.segment
+    h1.ui.header Drago測試
+    .ui.segment 輸入問題和R2資料庫文件做向量比對，取最相似(餘弦相似度>0.85)的文件內容回傳
       .ui.input
-        //- input(type="text" placeholder="與AI對話...", v-model="message")
-        //- button.ui.button(@click="sendMessage", @keyup.enter="sendMessage") 送出
-        input(autofocus type="text" placeholder="與AI對話...", v-model="message", @keyup.enter="sendMessage")
-        button.ui.button(@click="sendMessage") 送出
-      .result
-        //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
-        //- p(v-else-if="result !== ''") {{ parseResult(result) }}
-        p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
-        p(v-else-if="result !== ''") {{ parseResult(result) }}
+        input(autofocus type="text" placeholder="輸入文字..." v-model="message" @keyup.enter="sendMessage")
+        button.ui.button(@click="sendMessage")  送出
+    .result
+      p 結果
+      p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
+      p(v-else-if="result !== ''") {{ parseResult(result) }}
 </template>
 
 <script lang="ts">
@@ -19,7 +16,7 @@ import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 
 export default defineComponent({
-  name: 'AiView',
+  name: 'DragoTestingView',
   setup() {
     const message = ref('');
     const result = ref('');
@@ -34,7 +31,7 @@ export default defineComponent({
         message.value += '？';
       }
 
-      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/ai/' + message.value, {
+      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generateKeywords/' + message.value, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -56,8 +53,6 @@ export default defineComponent({
       message,
       result,
       isLoading,
-      sendMessage,
-      parseResult,
     };
   },
 });
@@ -79,5 +74,4 @@ export default defineComponent({
   line-height: 1.4;
   white-space: pre-wrap;
 }
-
 </style>
