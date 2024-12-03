@@ -10,7 +10,19 @@
         //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
         //- p(v-else-if="result !== ''") {{ parseResult(result) }}
         p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
-        p(v-else-if="result !== ''") {{ parseResult(result) }}
+        p(v-else-if="result !== ''")
+          h1 查詢結果列表如下
+          table.ui.celled.table
+            tbody
+              tr
+                td 問題
+                td 答案
+                td 原始文件
+              tr
+                td {{ message }}
+                td {{ parseResult(result) }}
+                td
+
 </template>
 
 <script lang="ts">
@@ -65,7 +77,7 @@ export default defineComponent({
 <style scoped>
 .ui.segment {
   margin-top: 20px;
-  max-width: 480px;
+  max-width: 100%;
 }
 
 .ui.header {
@@ -77,6 +89,22 @@ export default defineComponent({
   font-size: 16px;
   line-height: 1.4;
   white-space: pre-wrap;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background-color: #f4f4f4;
 }
 
 </style>
