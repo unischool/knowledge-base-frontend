@@ -1,7 +1,7 @@
 <template lang="pug">
   main
     h1.ui.header Drago測試
-    .ui.segment 輸入創源工具問題和R2資料庫文件做向量比對，取最相似(餘弦相似度>0.85)的文件內容回傳
+    .ui.segment 輸入創源工具問題和R2資料庫文件做向量比對，取最高分的兩個文件內容回傳。
       p 請輸入問題
       .ui.input
         input(autofocus type="text" placeholder="請輸入問題..", v-model="message", @keyup.enter="sendMessage")
@@ -33,7 +33,7 @@ export default defineComponent({
         message.value += '？';
       }
 
-      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generateKeywords/' + message.value, {
+      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generateBeddings/' + message.value, {
         headers: {
           'Content-Type': 'application/json',
         },
