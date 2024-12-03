@@ -22,7 +22,8 @@
                 th 匹配ID
                 th 相似度分數
                 th MetaData
-                tbody
+                th 動作
+            tbody
               tr(v-for="(item, index) in result" :key="index")
                 td {{ index + 1 }}
                 td {{ message }}
@@ -31,6 +32,10 @@
                 td {{ item.score.toFixed(2) }}
                 td
                   pre {{ formatMetadata(item.metadata) }}
+                td
+                  button.ui.primary.button(@click="downloadFile(item.metadata)", style="min-width:10em")
+                    i.download.icon
+                    | 下載檔案
         p(v-else) 未找到相關結果
 
 </template>
@@ -77,6 +82,12 @@ export default defineComponent({
     const formatMetadata = (metadata: any) => {
       return JSON.stringify(metadata, null, 2); // 格式化为带缩进的 JSON 字符串
     };
+    const downloadFile = (metadata: any) => {
+      console.log(metadata);
+      // 下載檔案
+      const fileUrl = 'https://knowledge-base-backend.leechiuhui.workers.dev/api/download/' + metadata.filename;
+      window.open(fileUrl, '_blank');
+    };
 
 
     /* const parseResult = (result: string) => {
@@ -92,6 +103,7 @@ export default defineComponent({
       isLoading,
       sendMessage,
       formatMetadata,
+      downloadFile,
     };
   },
 });
