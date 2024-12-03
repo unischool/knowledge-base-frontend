@@ -1,7 +1,7 @@
 <template lang="pug">
   main
     h1.ui.header Drago測試
-    .ui.segment 輸入創源工具問題和R2資料庫文件做向量比對，取最高分的兩個文件內容回傳。
+    .ui.segment 輸入創源工具問題和R2資料庫文件做向量比對，取最高分的2個文件內容回傳。
       p 請輸入問題
       .ui.input
         input(autofocus type="text" placeholder="請輸入問題..", v-model="message", @keyup.enter="sendMessage")
@@ -9,19 +9,29 @@
       .result
         //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
         //- p(v-else-if="result !== ''") {{ parseResult(result) }}
-        p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
-        p(v-else-if="result !== ''")
+        //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
+        p(v-if="isLoading") 載入中，請稍候...
+        p(v-else-if="result.length > 0")
           h1 查詢結果列表如下
           table.ui.celled.table
-            tbody
+            thead
               tr
-                td 問題
-                td 答案
-                td 原始文件
-              tr
+                th 序號
+                th 問題
+                th 答案
+                th 匹配ID
+                th 相似度分數
+                th MetaData
+                tbody
+              tr(v-for="(item, index) in result" :key="index")
+                td {{ index + 1 }}
                 td {{ message }}
-                td {{ parseResult(result) }}
+                td {{ item.aiResponse }}
+                td {{ item.id }}
+                td {{ item.score.toFixed(2) }}
                 td
+                  pre {{ formatMetadata(item.metadata) }}
+        p(v-else) 未找到相關結果
 
 </template>
 
@@ -33,42 +43,55 @@ export default defineComponent({
   name: 'DragoTestingView',
   setup() {
     const message = ref('');
-    const result = ref('');
+    //const result = ref('');
+    const result = ref([]);// 將 result 初始化為陣列
     const isLoading = ref(false);
 
     const sendMessage = () => {
+      if (!message.value.trim()) {
+        alert('請輸入問題');
+        return;
+      }
       isLoading.value = true;
-      result.value = '';
+      result.value = [];
       console.log(message.value);
 
       if (!message.value.endsWith('？')) {
         message.value += '？';
       }
 
-      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generateBeddings/' + message.value, {
+      //axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generateBeddings/' + message.value, {
+      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/generateBeddings/' + encodeURIComponent(message.value), {
         headers: {
           'Content-Type': 'application/json',
         },
       }).then((response) => {
         console.log(response);
-        result.value = response.data;
+        result.value = response.data; // response.data 是一個陣列
+        isLoading.value = false;
+      }).catch((error) => {
+        console.error(error);
         isLoading.value = false;
       });
     };
+    const formatMetadata = (metadata: any) => {
+      return JSON.stringify(metadata, null, 2); // 格式化为带缩进的 JSON 字符串
+    };
 
-    const parseResult = (result: string) => {
+
+    /* const parseResult = (result: string) => {
       if (result === '。') {
         return '請說得詳細一點';
       }
       return result;
     };
-
+ */
     return {
       message,
       result,
       isLoading,
       sendMessage,
-      parseResult,
+      formatMetadata,
     };
   },
 });
@@ -105,6 +128,12 @@ th, td {
 
 th {
   background-color: #f4f4f4;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
 }
 
 </style>
