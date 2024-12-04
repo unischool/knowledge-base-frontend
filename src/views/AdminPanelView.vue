@@ -100,24 +100,34 @@
 
   <script lang="ts">
   import { defineComponent, ref } from 'vue';
-  import axios from 'axios';
+  import axios, { AxiosError } from 'axios';
+
+  // 定義結果介面
+  interface ResultItem {
+    status: string;
+    message: string;
+  }
+  interface ErrorResponse {
+    message: string;
+  }
 
   export default defineComponent({
-    name: 'AdminPanel',
+    name: 'AdminPanelView',
     setup() {
       const indexName = ref('');
-      const result = ref([]);
+      // 明確定義陣列類型
+      const result = ref<ResultItem[]>([]);
       const isLoading = ref(false);
       const error = ref('');
 
       const deleteIndexName = ref('');
-      const deleteResult = ref([]);
+      const deleteResult = ref<ResultItem[]>([]);
       const isDeleteLoading = ref(false);
       const deleteError = ref('');
 
       const startNumber = ref('');
       const endNumber = ref('');
-      const batchVectorizeResult = ref([]);
+      const batchVectorizeResult = ref<ResultItem[]>([]);
       const isBatchVectorizeLoading = ref(false);
       const batchVectorizeError = ref('');
 
@@ -148,8 +158,11 @@
             message: '索引建立完成'
           }];
         } catch (err) {
-          console.error(err);
-          error.value = err.response?.data?.message || '建立索引時發生錯誤';
+            console.error(err);
+          const axiosError = err as AxiosError<ErrorResponse>;
+          // 使用类型断言
+          const errorData = axiosError.response?.data as ErrorResponse;
+          error.value = errorData?.message || '建立索引時發生錯誤';
         } finally {
           isLoading.value = false;
         }
@@ -183,9 +196,10 @@
             message: '索引刪除完成'
           }];
         } catch (err) {
-          console.log('deleteIndex後第二次err訊息：');
           console.error(err);
-          deleteError.value = err.response?.data?.message || '刪除索引時發生錯誤';
+          const axiosError = err as AxiosError<ErrorResponse>;
+          const errorData = axiosError.response?.data as ErrorResponse;
+          deleteError.value = errorData?.message || '刪除索引時發生錯誤';
         } finally {
           isDeleteLoading.value = false;
         }
@@ -211,12 +225,12 @@
 
         try {
           const response = await axios.get(
-          `https://knowledge-base-backend.leechiuhui.workers.dev/setupVectorFromR2/${start}/${end}`,
-          {
-            headers: {
+            `https://knowledge-base-backend.leechiuhui.workers.dev/setupVectorFromR2/${start}/${end}`,
+            {
+              headers: {
               'Content-Type': 'application/json',
-            },
-          }
+              },
+            }
           );
 
           console.log(response);
@@ -226,9 +240,11 @@
           }];
         } catch (err) {
           console.error(err);
-          batchVectorizeError.value = err.response?.data?.message || '批量向量化處理時發生錯誤';
+          const axiosError = err as AxiosError<ErrorResponse>;
+          const errorData = axiosError.response?.data as ErrorResponse;
+          batchVectorizeError.value = errorData?.message || '批量向量化處理時發生錯誤';
         } finally {
-          isBatchVectorizeLoading.value = false;
+        isBatchVectorizeLoading.value = false;
         }
       };
 
