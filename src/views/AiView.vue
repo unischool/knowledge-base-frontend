@@ -7,11 +7,8 @@
         input(autofocus type="text" placeholder="請輸入問題..", v-model="message", @keyup.enter="sendMessage")
         button.ui.button(@click="sendMessage") 送出
       .result
-        //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
-        //- p(v-else-if="result !== ''") {{ parseResult(result) }}
-        //- p(v-if="result === '' && message !== '' && isLoading") 載入中，請稍候...
         p(v-if="isLoading") 載入中，請稍候...
-        p(v-else-if="result.length > 0")
+        template(v-else-if="result.length > 0")
           h1 查詢結果列表如下
           table.ui.celled.table
             thead
