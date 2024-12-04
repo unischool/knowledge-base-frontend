@@ -15,63 +15,63 @@
             .description 中英文工具技術資料
 
 
-  .ui.segment.highlight-section
-    .ui.text.container
-      h1.ui.header.highlight-header
-        i.search.icon
-        .content
-          | 創源工具資料搜尋
-        .sub.header (資料逐步上傳目前可測試中)
+  //- .ui.segment.highlight-section
+  //-   .ui.text.container
+  //-     h1.ui.header.highlight-header
+  //-       i.search.icon
+  //-       .content
+  //-         | 創源工具資料搜尋
+  //-       .sub.header (資料逐步上傳目前可測試中)
 
-    .ui.form.container.search-container
-      .ui.field
-        .ui.large.search.icon.input
-          input(
-            v-model="mySearch",
-            placeholder="請輸入關鍵字搜尋...",
-            @input="handleSearch"
-          )
-          i.search.icon
+  //-   .ui.form.container.search-container
+  //-     .ui.field
+  //-       .ui.large.search.icon.input
+  //-         input(
+  //-           v-model="mySearch",
+  //-           placeholder="請輸入關鍵字搜尋...",
+  //-           @input="handleSearch"
+  //-         )
+  //-         i.search.icon
 
-    .ui.segment.container.results-container(
-      v-if="mySearch.length > 0 && keywordsWithFiles.filter((keyword) => keyword.keyword.includes(mySearch)).length > 0"
-    )
-      button.keyword.ui.button(
-        v-for="keyword in keywordsWithFiles",
-        @click="handleClick(keyword)",
-        v-show="mySearch.length > 0 && keyword.keyword.includes(mySearch)"
-      ) {{ keyword.keyword }}
+  //-   .ui.segment.container.results-container(
+  //-     v-if="mySearch.length > 0 && keywordsWithFiles.filter((keyword) => keyword.keyword.includes(mySearch)).length > 0"
+  //-   )
+  //-     button.keyword.ui.button(
+  //-       v-for="keyword in keywordsWithFiles",
+  //-       @click="handleClick(keyword)",
+  //-       v-show="mySearch.length > 0 && keyword.keyword.includes(mySearch)"
+  //-     ) {{ keyword.keyword }}
 
-      .secondary-search-section
-    h2.secondary-title
-      | 至青宇宙學校歷年來課程影音文字搜尋
-      span.status-text (尚未上線)
+  //-     .secondary-search-section
+  //-   h2.secondary-title
+  //-     | 至青宇宙學校歷年來課程影音文字搜尋
+  //-     span.status-text (尚未上線)
 
-    .search-form
-      .search-field
-        input(
-          v-model="mySearch",
-          placeholder="Search...",
-          @input="handleSearch"
-        )
-        i.search.icon
+  //-   .search-form
+  //-     .search-field
+  //-       input(
+  //-         v-model="mySearch",
+  //-         placeholder="Search...",
+  //-         @input="handleSearch"
+  //-       )
+  //-       i.search.icon
 
-    .search-results(
-      v-if="mySearch.length > 0 && keywordsWithFiles.filter((keyword) => keyword.keyword.includes(mySearch)).length > 0"
-    )
-      button.secondary-keyword-btn(
-        v-for="keyword in keywordsWithFiles",
-        @click="handleClick(keyword)",
-        v-show="mySearch.length > 0 && keyword.keyword.includes(mySearch)"
-      ) {{ keyword.keyword }}
+  //-   .search-results(
+  //-     v-if="mySearch.length > 0 && keywordsWithFiles.filter((keyword) => keyword.keyword.includes(mySearch)).length > 0"
+  //-   )
+  //-     button.secondary-keyword-btn(
+  //-       v-for="keyword in keywordsWithFiles",
+  //-       @click="handleClick(keyword)",
+  //-       v-show="mySearch.length > 0 && keyword.keyword.includes(mySearch)"
+  //-     ) {{ keyword.keyword }}
 
-    .related-files(v-if="selectedKeyword.keyword")
-      h3.files-title 和 {{ selectedKeyword.keyword }} 相關的文件：
-      .files-list
-        button.file-btn(
-          v-for="file in selectedKeyword.files",
-          @click="handleFileClick(file)"
-        ) {{ file }}
+  //-   .related-files(v-if="selectedKeyword.keyword")
+  //-     h3.files-title 和 {{ selectedKeyword.keyword }} 相關的文件：
+  //-     .files-list
+  //-       button.file-btn(
+  //-         v-for="file in selectedKeyword.files",
+  //-         @click="handleFileClick(file)"
+  //-       ) {{ file }}
 </template>
 
 

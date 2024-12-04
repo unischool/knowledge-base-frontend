@@ -9,11 +9,11 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
-    {
-      path: '/dragotesting',
-      name: 'dragotesting',
-      component: () => import('../views/DragoTestingView.vue')
-    },
+    // {
+    //   path: '/dragotesting',
+    //   name: 'dragotesting',
+    //   component: () => import('../views/DragoTestingView.vue')
+    // },
     {
       path: '/ai',
       name: 'ai',
@@ -28,9 +28,9 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/upload',
-      name: 'upload',
-      component: () => import('../views/UploadView.vue')
+      path: '/adminpanel',
+      name: 'adminpanel',
+      component: () => import('../views/AdminPanelView.vue')
     }
   ]
 })

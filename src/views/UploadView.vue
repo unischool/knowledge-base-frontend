@@ -1,10 +1,48 @@
 <template lang="pug">
   <div>
-    form.ui.form.container(@submit.prevent="handleSubmit")
-      h2.ui.header 上傳文件到知識庫
-      input(type="file" @change="handleFileChange" required)
-      input(type="password" v-model="password" placeholder="Enter password" required)
-      button.ui.button(type="submit") Upload
+    .ui.segment
+      h1.ui.header 文件管理系統
+      .ui.divider
+
+    .ui.segment
+      h2.ui.header 索引管理
+      .ui.divider
+      form.ui.form.container(@submit.prevent="handleSubmit")
+        h3.ui.header 建立索引
+        input(type="file" @change="handleFileChange" required)
+        input(type="password" v-model="password" placeholder="Enter password" required)
+        button.ui.primary.button(type="submit") 建立
+      .ui.divider
+      form.ui.form.container(@submit.prevent="handleSubmit")
+        h3.ui.header 刪除索引
+        input(type="file" @change="handleFileChange" required)
+        input(type="password" v-model="password" placeholder="Enter password" required)
+        button.ui.negative.button(type="submit") 刪除
+
+    .ui.segment
+      h2.ui.header R2文件存儲和向量化
+      .ui.divider
+      form.ui.form.container(@submit.prevent="handleSubmit")
+        h3.ui.header 從Google drive上傳文件到R2
+        input(type="file" @change="handleFileChange" required)
+        input(type="password" v-model="password" placeholder="Enter password" required)
+        button.ui.blue.button(type="submit") 上傳至 R2
+      .ui.divider
+      form.ui.form.container(@submit.prevent="handleSubmit")
+        h3.ui.header 將R2文件向量化
+        input(type="file" @change="handleFileChange" required)
+        input(type="password" v-model="password" placeholder="Enter password" required)
+        button.ui.yellow.button(type="submit") R2文件向量化
+
+    .ui.segment
+      h2.ui.header D1文件存儲
+      .ui.divider
+      form.ui.form.container(@submit.prevent="handleSubmit")
+        h3.ui.header 上傳文件到D1
+        input(type="file" @change="handleFileChange" required)
+        input(type="password" v-model="password" placeholder="Enter password" required)
+        button.ui.orange.button(type="submit") 上傳文件到D1
+
     .ui.dimmer.active(v-if="uploading")
       .ui.loader
   </div>
@@ -29,7 +67,7 @@ export default {
         alert('No file selected.');
         return;
       }
-      
+
     },
 
     async handleSubmit() {
@@ -65,3 +103,21 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.ui.segment {
+  margin: 2em 0;
+}
+
+.ui.form {
+  margin-bottom: 2em;
+}
+
+.ui.button {
+  margin-top: 1em;
+}
+
+input {
+  margin-bottom: 1em;
+}
+</style>

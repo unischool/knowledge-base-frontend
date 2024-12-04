@@ -4,20 +4,20 @@ header
     button.no-border.ui.item(@click="toggleSidebar")
       i.icon.bars
     RouterLink.item(to="/") 首頁-文件搜尋
-    RouterLink.item(to="/dragotesting") Drago測試
+    //- RouterLink.item(to="/dragotesting") Drago測試
     RouterLink.item(to="/ai") AI機器人-創源工具RAG
     RouterLink.item(to="/ai-rag") AI機器人-學校課程RAG
     RouterLink.item(to="/faq") FAQ
-    RouterLink.item(to="/about") ABOUT
-    RouterLink.item(to="/upload") 後台-上傳
+    RouterLink.item(to="/about") about
+    RouterLink.item(to="/adminpanel") 後台管理
 .small-spacer
 .ui.sidebar.vertical.menu#side-menu(:class="{'hidden': !sidebarVisible}")
   RouterLink.item(to='/', exact='', name="home")
     i.home.icon
     | 首頁-文件搜尋
-  RouterLink.item(to='/dragotesting', name="dragotesting")
-    i.dragTesting.icon
-    | Drago測試
+  //- RouterLink.item(to='/dragotesting', name="dragotesting")
+  //-   i.dragTesting.icon
+  //-   | Drago測試
   RouterLink.item(to='/ai', name="ai")
     i.ai.icon
     | AI機器人-創源工具RAG
@@ -30,9 +30,9 @@ header
   RouterLink.item(to='/about', name="about")
     i.info.icon
     | ABOUT
-  RouterLink.item(to='/upload', name="upload")
-    i.upload.icon
-    | 後台-上傳
+  RouterLink.item(to='/adminpanel', name="adminpanel")
+    i.settings.icon
+    | 後台管理
 .ui.sidebar.bg(:class="{'hidden': !sidebarVisible}", @click="toggleSidebar")
 
 .ui.container
