@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('../views/AiView.vue')
     },
     {
+      path: '/ai-rag',
+      name: 'ai-rag',
+      component: () => import('../views/Ai-ragView.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
@@ -31,6 +36,11 @@ const router = createRouter({
       path: '/adminpanel',
       name: 'adminpanel',
       component: () => import('../views/AdminPanelView.vue')
+    },
+    {
+      path: '/uniadminpanel',
+      name: 'uniadminpanel',
+      component: () => import('../views/UniAdminPanelView.vue')
     }
   ]
 })

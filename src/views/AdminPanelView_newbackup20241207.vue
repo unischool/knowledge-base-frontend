@@ -1,7 +1,7 @@
 <template lang="pug">
-  main
   main.workflow-container
     h1.workflow-title 創源工具知識庫RAG文件處理流程
+
     .workflow-section
       .workflow-header
         i.file.archive.outline.icon
@@ -13,15 +13,14 @@
           h3 本地端/Local端文件「doc xls pdf jpg oog png wav mp3」上傳至 Google Drive
           .step-content
             i.google.drive.icon
-            p 從本地端/Local端上傳文件到 Google Drive「準備上傳區」
-
+            .description 從本地端/Local端上傳文件到 Google Drive「準備上傳區」
 
         .step-card
           .step-number 02
           h3 Cloudflare R2 存儲
           .step-content
             i.cloud.upload.icon
-            p 將文件傳輸至 Cloudflare R2 存儲
+            .description 將文件傳輸至 Cloudflare R2 存儲
             .tech-tag main2.ts
             ul.step-details
               li 將文件從 Google Drive「準備上傳區」傳輸至 Cloudflare R2 存儲
@@ -33,7 +32,7 @@
           h3 向量化處理
           .step-content
             i.database.icon
-            p 將 R2 文件向量化並存入 Cloudflare 索引庫
+            .description 將 R2 文件向量化並存入 Cloudflare 索引庫
             .tech-tag setupVectorFromR2
             ul.step-details
               li select from Cloudflare D1 數據庫 欄位「是否已經向量化並進Cloudflare索引庫」 等於 false的id選出來
@@ -41,18 +40,25 @@
               li 更新 Cloudflare D1 數據庫 將欄位「是否已經向量化並進Cloudflare索引庫」 等於 true
 
     h1.ui.header 創源工具-索引建立
+
     .ui.segment
       h2 步驟一：建立向量索引
       .ui.message.info
-        p 此步驟將建立向量索引，用於後續的文件檢索
+        .description 此步驟將建立向量索引，用於後續的文件檢索
+
       .ui.input
-        input(type="text" placeholder="請輸入索引名稱..", v-model="indexName", @keyup.enter="createIndex")
+        input(
+          type="text"
+          placeholder="請輸入索引名稱.."
+          v-model="indexName"
+          @keyup.enter="createIndex"
+        )
         button.ui.primary.button(@click="createIndex")
           i.plus.icon
           | 建立索引
 
       .result
-        p(v-if="isLoading") 載入中，請稍候...
+        .loading(v-if="isLoading") 載入中，請稍候...
         .ui.positive.message(v-else-if="result.length > 0")
           h3 操作結果
           table.ui.celled.table
@@ -66,77 +72,92 @@
                 td {{ indexName }}
                 td {{ item.status }}
                 td {{ item.message }}
-        p(v-else-if="error")
-          .ui.negative.message
-            h3 錯誤訊息
-            p {{ error }}
-
-  .ui.segment
-    h2 步驟二：刪除向量索引
-    .ui.message.warning
-      p 此步驟將刪除向量索引，請謹慎操作
-    .ui.input
-      input(type="text" placeholder="請輸入要刪除的索引名稱..", v-model="deleteIndexName", @keyup.enter="deleteIndex")
-      button.ui.negative.button(@click="deleteIndex")
-        i.trash.icon
-        | 刪除索引
-
-    .delete-result
-      p(v-if="isDeleteLoading") 載入中，請稍候...
-      .ui.positive.message(v-else-if="deleteResult.length > 0")
-        h3 操作結果
-        table.ui.celled.table
-          thead
-            tr
-              th 索引名稱
-              th 狀態
-              th 訊息
-          tbody
-            tr(v-for="(item, index) in deleteResult" :key="index")
-              td {{ deleteIndexName }}
-              td {{ item.status }}
-              td {{ item.message }}
-      p(v-else-if="deleteError")
-        .ui.negative.message
+        .ui.negative.message(v-else-if="error")
           h3 錯誤訊息
-          p {{ deleteError }}
+          .description {{ error }}
 
-  .ui.segment
-    h2 步驟四：批量 R2 文件向量化
-    .ui.message.info
-      p 此步驟將對指定範圍內的 R2 文件進行批量向量化處理
-    .ui.form
-      .two.fields
-        .field
-          label 起始檔案編號
-          input(type="number" placeholder="請輸入起始編號..", v-model="startNumber", min="1")
-        .field
-          label 結束檔案編號
-          input(type="number" placeholder="請輸入結束編號..", v-model="endNumber", min="1")
-      button.ui.teal.button(@click="vectorizeR2FileRange")
-        i.files.icon
-        | 批量向量化
+    .ui.segment
+      h2 步驟二：刪除向量索引
+      .ui.message.warning
+        .description 此步驟將刪除向量索引，請謹慎操作
 
-    .batch-vectorize-result
-      p(v-if="isBatchVectorizeLoading") 載入中，請稍候...
-      .ui.positive.message(v-else-if="batchVectorizeResult.length > 0")
-        h3 操作結果
-        table.ui.celled.table
-          thead
-            tr
-              th 處理範圍
-              th 狀態
-              th 訊息
-          tbody
-            tr(v-for="(item, index) in batchVectorizeResult" :key="index")
-              td {{ startNumber }} - {{ endNumber }}
-              td {{ item.status }}
-              td {{ item.message }}
-      p(v-else-if="batchVectorizeError")
-        .ui.negative.message
+      .ui.input
+        input(
+          type="text"
+          placeholder="請輸入要刪除的索引名稱.."
+          v-model="deleteIndexName"
+          @keyup.enter="deleteIndex"
+        )
+        button.ui.negative.button(@click="deleteIndex")
+          i.trash.icon
+          | 刪除索引
+
+      .delete-result
+        .loading(v-if="isDeleteLoading") 載入中，請稍候...
+        .ui.positive.message(v-else-if="deleteResult.length > 0")
+          h3 操作結果
+          table.ui.celled.table
+            thead
+              tr
+                th 索引名稱
+                th 狀態
+                th 訊息
+            tbody
+              tr(v-for="(item, index) in deleteResult" :key="index")
+                td {{ deleteIndexName }}
+                td {{ item.status }}
+                td {{ item.message }}
+        .ui.negative.message(v-else-if="deleteError")
           h3 錯誤訊息
-          p {{ batchVectorizeError }}
-</template>
+          .description {{ deleteError }}
+
+    .ui.segment
+      h2 步驟四：批量 R2 文件向量化
+      .ui.message.info
+        .description 此步驟將對指定範圍內的 R2 文件進行批量向量化處理
+
+      .ui.form
+        .two.fields
+          .field
+            label 起始檔案編號
+            input(
+              type="number"
+              placeholder="請輸入起始編號.."
+              v-model="startNumber"
+              min="1"
+            )
+          .field
+            label 結束檔案編號
+            input(
+              type="number"
+              placeholder="請輸入結束編號.."
+              v-model="endNumber"
+              min="1"
+            )
+
+        button.ui.teal.button(@click="vectorizeR2FileRange")
+          i.files.icon
+          | 批量向量化
+
+      .batch-vectorize-result
+        .loading(v-if="isBatchVectorizeLoading") 載入中，請稍候...
+        .ui.positive.message(v-else-if="batchVectorizeResult.length > 0")
+          h3 操作結果
+          table.ui.celled.table
+            thead
+              tr
+                th 處理範圍
+                th 狀態
+                th 訊息
+            tbody
+              tr(v-for="(item, index) in batchVectorizeResult" :key="index")
+                td {{ startNumber }} - {{ endNumber }}
+                td {{ item.status }}
+                td {{ item.message }}
+        .ui.negative.message(v-else-if="batchVectorizeError")
+          h3 錯誤訊息
+          .description {{ batchVectorizeError }}
+  </template>
 
   <script lang="ts">
   import { defineComponent, ref } from 'vue';
@@ -311,172 +332,49 @@
   });
   </script>
 
-  <style scoped>
-  .ui.segment {
-    margin-top: 20px;
-    max-width: 100%;
-  }
-
-  .ui.header {
-    margin-top: 1em;
-  }
-
-  .result {
-    margin-top: 2em;
-  }
-
-  .ui.input {
-    width: 100%;
-    margin-top: 1em;
-  }
-
-  .ui.input input {
-    margin-right: 1em;
-  }
-
-  .ui.message {
-    margin-top: 1em;
-  }
-
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-    vertical-align: top;
-  }
-
-  th {
-    background-color: #f4f4f4;
-  }
-
-  .ui.button {
-    margin-left: 1em;
-  }
-
-  .ui.message.info {
-    background-color: #f8ffff;
-    color: #276f86;
-    box-shadow: 0 0 0 1px #a9d5de inset, 0 0 0 0 transparent;
-  }
-
-  .ui.positive.message {
-    background-color: #fcfff5;
-    color: #2c662d;
-    box-shadow: 0 0 0 1px #a3c293 inset, 0 0 0 0 transparent;
-  }
-
-  .ui.negative.message {
-    background-color: #fff6f6;
-    color: #9f3a38;
-    box-shadow: 0 0 0 1px #e0b4b4 inset, 0 0 0 0 transparent;
-  }
-
-.ui.teal.button {
-  background-color: #00b5ad;
-  color: #fff;
-}
-
-.ui.teal.button:hover {
-  background-color: #009c95;
-}
-
-.batch-vectorize-result {
-  margin-top: 2em;
-}
-
-.two.fields {
-  display: flex;
-  gap: 1em;
-  margin-bottom: 1em;
-}
-
-.field {
-  flex: 1;
-}
-
-.field label {
-  display: block;
-  margin-bottom: 0.5em;
-  font-weight: bold;
-}
-
-.field input {
-  width: 100%;
-  padding: 0.5em;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
+<style scoped>
 .workflow-container {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 2rem;
 }
 
 .workflow-title {
-  font-size: 2.5rem;
-  color: #24292e;
   margin-bottom: 2rem;
-  border-bottom: 2px solid #e1e4e8;
-  padding-bottom: 1rem;
+  color: #2c3e50;
 }
 
 .workflow-section {
-  background: #ffffff;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  padding: 2rem;
+  margin-bottom: 3rem;
 }
 
 .workflow-header {
   display: flex;
   align-items: center;
+  gap: 1rem;
   margin-bottom: 2rem;
-
-  h2 {
-    margin: 0;
-    margin-left: 1rem;
-    color: #24292e;
-    font-size: 1.8rem;
-  }
-
-  i {
-    font-size: 2rem;
-    color: #0366d6;
-  }
 }
 
 .workflow-steps {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
 }
 
 .step-card {
-  background: #f6f8fa;
-  border-radius: 8px;
-  padding: 1.5rem;
   position: relative;
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
 }
 
 .step-number {
   position: absolute;
   top: -15px;
   left: -15px;
-  background: #0366d6;
+  background: #2185d0;
   color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border-radius: 90%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -485,45 +383,46 @@
 
 .step-content {
   margin-top: 1rem;
-
-  i {
-    font-size: 1.5rem;
-    color: #0366d6;
-    margin-right: 0.5rem;
-  }
-
-  p {
-    color: #586069;
-    margin: 0.5rem 0;
-  }
 }
 
-.step-details {
-  list-style: none;
-  padding-left: 1rem;
-  margin-top: 0.5rem;
-
-  li {
-    color: #586069;
-    margin: 0.3rem 0;
-    position: relative;
-
-    &:before {
-      content: "→";
-      color: #0366d6;
-      position: absolute;
-      left: -1rem;
-    }
-  }
+.description {
+  margin: 1rem 0;
+  color: #666;
 }
 
 .tech-tag {
   display: inline-block;
-  background: #0366d6;
-  color: white;
-  padding: 0.2rem 0.8rem;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
+  background: #e8f0fe;
+  color: #1a73e8;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  font-size: 0.9em;
 }
-  </style>
+
+.step-details {
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 1rem;
+  color: #666;
+}
+
+.ui.input {
+  margin: 1rem 0;
+}
+
+.result,
+.delete-result,
+.batch-vectorize-result {
+  margin-top: 1.5rem;
+}
+
+i.icon {
+  font-size: 2em;
+  color: #2185d0;
+}
+</style>
