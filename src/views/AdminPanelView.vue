@@ -10,22 +10,23 @@
       .workflow-steps
         .step-card
           .step-number 01
-          h3 文件上傳與備份
+          h3 本地端/Local端文件「doc xls pdf jpg oog png wav mp3」上傳至 Google Drive
           .step-content
             i.google.drive.icon
-            p 從本地端上傳文件到 Google Drive
-            ul.step-details
-              li 上傳至「準備上傳區」資料夾
-              li 記錄到「D1」數據庫
-              li 移動至「已上傳區」進行備份
+            p 從本地端/Local端上傳文件到 Google Drive「準備上傳區」
+
 
         .step-card
           .step-number 02
-          h3 R2 存儲
+          h3 Cloudflare R2 存儲
           .step-content
             i.cloud.upload.icon
-            p 將文件傳輸至 R2 存儲
+            p 將文件傳輸至 Cloudflare R2 存儲
             .tech-tag main2.ts
+            ul.step-details
+              li 將文件從 Google Drive「準備上傳區」傳輸至 Cloudflare R2 存儲
+              li 記錄到「Cloudflare D1」數據庫 欄位有：是否已經向量化並進Cloudflare索引庫、文件路徑、檔案名稱、檔案綱要、檔案備註、檔案大小、檔案類型、上傳時間
+              li 移動至 Google Drive「已上傳區」進行備份
 
         .step-card
           .step-number 03
@@ -34,6 +35,11 @@
             i.database.icon
             p 將 R2 文件向量化並存入 Cloudflare 索引庫
             .tech-tag setupVectorFromR2
+            ul.step-details
+              li select from Cloudflare D1 數據庫 欄位「是否已經向量化並進Cloudflare索引庫」 等於 false的id選出來
+              li 將 選出的id 從 Cloudflare R2 存儲庫 提取後向量化存入 Cloudflare 索引庫
+              li 更新 Cloudflare D1 數據庫 將欄位「是否已經向量化並進Cloudflare索引庫」 等於 true
+
     h1.ui.header 創源工具-索引建立
     .ui.segment
       h2 步驟一：建立向量索引
