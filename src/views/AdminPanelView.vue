@@ -1,5 +1,39 @@
 <template lang="pug">
   main
+  main.workflow-container
+    h1.workflow-title 知識庫RAG文件處理流程
+    .workflow-section
+      .workflow-header
+        i.file.archive.outline.icon
+        h2 文件處理與向量化流程
+
+      .workflow-steps
+        .step-card
+          .step-number 01
+          h3 文件上傳與備份
+          .step-content
+            i.google.drive.icon
+            p 從本地端上傳文件到 Google Drive
+            ul.step-details
+              li 上傳至「準備上傳區」資料夾
+              li 記錄到「D1」數據庫
+              li 移動至「已上傳區」進行備份
+
+        .step-card
+          .step-number 02
+          h3 R2 存儲
+          .step-content
+            i.cloud.upload.icon
+            p 將文件傳輸至 R2 存儲
+            .tech-tag main2.ts
+
+        .step-card
+          .step-number 03
+          h3 向量化處理
+          .step-content
+            i.database.icon
+            p 將 R2 文件向量化並存入 Cloudflare 索引庫
+            .tech-tag setupVectorFromR2
     h1.ui.header 創源工具-索引建立
     .ui.segment
       h2 步驟一：建立向量索引
@@ -370,5 +404,120 @@
   padding: 0.5em;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+.workflow-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.workflow-title {
+  font-size: 2.5rem;
+  color: #24292e;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e1e4e8;
+  padding-bottom: 1rem;
+}
+
+.workflow-section {
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  padding: 2rem;
+}
+
+.workflow-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  h2 {
+    margin: 0;
+    margin-left: 1rem;
+    color: #24292e;
+    font-size: 1.8rem;
+  }
+
+  i {
+    font-size: 2rem;
+    color: #0366d6;
+  }
+}
+
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.step-card {
+  background: #f6f8fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.step-number {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  background: #0366d6;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step-content {
+  margin-top: 1rem;
+
+  i {
+    font-size: 1.5rem;
+    color: #0366d6;
+    margin-right: 0.5rem;
+  }
+
+  p {
+    color: #586069;
+    margin: 0.5rem 0;
+  }
+}
+
+.step-details {
+  list-style: none;
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+
+  li {
+    color: #586069;
+    margin: 0.3rem 0;
+    position: relative;
+
+    &:before {
+      content: "→";
+      color: #0366d6;
+      position: absolute;
+      left: -1rem;
+    }
+  }
+}
+
+.tech-tag {
+  display: inline-block;
+  background: #0366d6;
+  color: white;
+  padding: 0.2rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
   </style>
