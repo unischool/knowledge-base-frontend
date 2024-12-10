@@ -7,6 +7,8 @@ header
     //- RouterLink.item(to="/dragotesting") Drago測試
     RouterLink.item(to="/ai") AI機器人-創源工具RAG
     RouterLink.item(to="/ai-rag") AI機器人-學校課程RAG
+    RouterLink.item(to="/fulltextsearch") 全文檢索-創源工具
+    RouterLink.item(to="/unifulltextsearch") 全文檢索-學校課程
     RouterLink.item(to="/faq") FAQ
     RouterLink.item(to="/about") ABOUT
     RouterLink.item(to="/adminpanel") 創源工具後台管理
@@ -25,6 +27,12 @@ header
   RouterLink.item(to='/ai-rag', name="ai-rag")
     i.ai.icon
     | AI機器人-學校課程RAG
+  RouterLink.item(to='/fulltextsearch', name="fulltextsearch")
+    i.fulltextsearch.icon
+    | 全文檢索-創源工具
+  RouterLink.item(to='/unifulltextsearch', name="unifulltextsearch")
+    i.unifulltextsearch.icon
+    | 全文檢索-學校課程
   RouterLink.item(to='/faq', name="faq")
     i.help.icon
     | FAQ

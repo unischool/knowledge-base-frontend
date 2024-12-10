@@ -25,6 +25,16 @@ const router = createRouter({
       component: () => import('../views/Ai-ragView.vue')
     },
     {
+      path: '/fulltextsearch',
+      name: 'fulltextsearch',
+      component: () => import('../views/FullTextSearchView.vue')
+    },
+    {
+      path: '/unifulltextsearch',
+      name: 'unifulltextsearch',
+      component: () => import('../views/UniFullTextSearchView.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
