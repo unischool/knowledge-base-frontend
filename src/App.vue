@@ -13,6 +13,7 @@ header
     RouterLink.item(to="/about") ABOUT
     RouterLink.item(to="/adminpanel") 創源工具後台管理
     RouterLink.item(to="/uniadminpanel") 學校課程後台管理
+    RouterLink.item(to="/upload") 上傳檔案
 .small-spacer
 .ui.sidebar.vertical.menu#side-menu(:class="{'hidden': !sidebarVisible}")
   RouterLink.item(to='/', exact='', name="home")
@@ -45,6 +46,9 @@ header
   RouterLink.item(to='/uniadminpanel', name="uniadminpanel")
     i.settings.icon
     | 學校課程後台管理
+  RouterLink.item(to='/upload', name="upload")
+    i.upload.icon
+    | 上傳檔案
 .ui.sidebar.bg(:class="{'hidden': !sidebarVisible}", @click="toggleSidebar")
 
 .ui.container

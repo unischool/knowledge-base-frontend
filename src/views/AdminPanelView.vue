@@ -14,6 +14,40 @@
           .step-content
             i.google.drive.icon
             .description 從本地端/Local端上傳文件到 Google Drive「準備上傳區」
+            // 新增的表單部分
+            .ui.form
+              .field
+                label 選擇文件
+                .ui.action.input
+                  input(
+                    type="file"
+                    ref="fileInput"
+                    @change="handleFileChange"
+                    accept="doc, xls, pdf, jpg, oog, png, wav, mp3"
+                    style="display: inline-block;"
+                  )
+                  button.ui.primary.button(@click="uploadToGoogleDriveReady")
+                    i.upload.icon
+                    | 上傳至準備區
+            // 新增結果顯示區域
+            .upload-result
+              .loading(v-if="isUploadLoading") 載入中，請稍候...
+              .ui.positive.message(v-else-if="uploadResult.length > 0")
+                h3 操作結果
+                table.ui.celled.table
+                  thead
+                    tr
+                      th 檔案名稱
+                      th 狀態
+                      th 訊息
+                  tbody
+                    tr(v-for="(item, index) in uploadResult" :key="index")
+                      td {{ selectedFile.name }}
+                      td {{ item.status }}
+                      td {{ item.message }}
+              .ui.negative.message(v-else-if="uploadError")
+                h3 錯誤訊息
+                .description {{ uploadError }}
 
         .step-card
           .step-number 02
@@ -177,6 +211,45 @@
     setup() {
       const indexName = ref('');
       // 明確定義陣列類型
+      const fileInput = ref<HTMLInputElement | null>(null);
+      const selectedFile = ref<File | null>(null);
+
+      const handleFileChange = (event: Event) => {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files[0]) {
+          const file = input.files[0];
+          // 定義允許的檔案類型
+          const allowedTypes = [
+            'application/msword', // .doc
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+            'application/vnd.ms-excel', // .xls
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+            'application/pdf', // .pdf
+            'image/jpeg', // .jpg
+            'image/png', // .png
+            'audio/ogg', // .ogg
+            'audio/wav', // .wav
+            'audio/mpeg', // .mp3
+          ];
+
+          // 檢查檔案類型
+          if (!allowedTypes.includes(file.type)) {
+            alert('請只上傳：doc, xls, pdf, jpg, oog, png, wav, mp3 的檔案格式');
+            // 清除選擇的檔案
+            input.value = '';
+            selectedFile.value = null;
+            return;
+          }
+          // 如果檔案格式正確 ,則設置 selectedFile
+          selectedFile.value = file;
+        }
+      };
+
+      //const uploadFileName = ref('');
+      const uploadResult = ref<ResultItem[]>([]);
+      const isUploadLoading = ref(false);
+      const uploadError = ref('');
+
       const result = ref<ResultItem[]>([]);
       const isLoading = ref(false);
       const error = ref('');
@@ -192,6 +265,48 @@
       const isBatchVectorizeLoading = ref(false);
       const batchVectorizeError = ref('');
 
+      // 上傳至Google Drive準備區
+      const uploadToGoogleDriveReady = async () => {
+        if (!selectedFile.value) {
+          alert('請選擇檔案');
+          return;
+        }
+
+        isUploadLoading.value = true;
+        uploadError.value = '';
+        uploadResult.value = [];
+
+        try {
+          // 創建 FormData 對象
+          const formData = new FormData();
+          formData.append('file', selectedFile.value);
+
+          const response = await axios.post(
+            'https://knowledge-base-backend.leechiuhui.workers.dev/uploadToGoogleDriveReady',
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
+
+          console.log(response);
+            uploadResult.value = [{
+            status: '成功',
+            message: '檔案已上傳至準備區'
+          }];
+        } catch (err) {
+          console.error(err);
+          const axiosError = err as AxiosError<ErrorResponse>;
+          const errorData = axiosError.response?.data as ErrorResponse;
+          uploadError.value = errorData?.message || '上傳檔案時發生錯誤';
+        } finally {
+          isUploadLoading.value = false;
+        }
+      };
+
+      // 建立向量索引
       const createIndex = async () => {
         if (!indexName.value.trim()) {
           alert('請輸入索引名稱');
@@ -312,6 +427,14 @@
 
       return {
         indexName,
+        fileInput,
+        selectedFile,
+        handleFileChange,
+       // uploadFileName,
+        uploadResult,
+        isUploadLoading,
+        uploadError,
+        uploadToGoogleDriveReady,
         result,
         isLoading,
         error,
@@ -425,4 +548,52 @@ i.icon {
   font-size: 2em;
   color: #2185d0;
 }
+.ui.action.input {
+  display: flex;
+  flex-wrap: wrap; /* 允許元素換行 */
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.ui.action.input input[type="file"] {
+  flex: 1;
+  min-width: 200px; /* 設置最小寬度 */
+  max-width: 100%;
+}
+
+.ui.primary.button {
+  white-space: nowrap; /* 防止按鈕文字換行 */
+  margin: 0.5rem 0;
+}
+
+/* 添加響應式設計 */
+@media screen and (max-width: 768px) {
+  .ui.action.input {
+    flex-direction: column; /* 在手機版時改為垂直排列 */
+  }
+
+  .ui.action.input input[type="file"] {
+    width: 100%;
+  }
+
+  .ui.primary.button {
+    width: 100%; /* 按鈕占滿整行 */
+    margin-top: 0.5rem;
+  }
+
+  .step-card {
+    padding: 1.5rem; /* 減少卡片內邊距 */
+    margin: 1rem 0; /* 增加卡片間距 */
+  }
+}
+
+/* 確保整體容器有適當的邊距 */
+.workflow-container {
+  padding: 1rem;
+  max-width: 100%;
+  overflow-x: hidden; /* 防止水平滾動 */
+}
+
+
 </style>

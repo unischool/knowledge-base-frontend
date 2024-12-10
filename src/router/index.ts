@@ -51,6 +51,11 @@ const router = createRouter({
       path: '/uniadminpanel',
       name: 'uniadminpanel',
       component: () => import('../views/UniAdminPanelView.vue')
+    },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: () => import('../views/UploadView.vue')
     }
   ]
 })
