@@ -280,6 +280,12 @@
           // 創建 FormData 對象
           const formData = new FormData();
           formData.append('file', selectedFile.value);
+          console.log('selectedFile.value.name:', selectedFile.value.name);
+          console.log('selectedFile.value.type:', selectedFile.value.type);
+          console.log('selectedFile.value.size:', selectedFile.value.size);
+          console.log('formData:', formData);
+          console.log('formData.get("file"):', formData.get('file'));
+
 
           const response = await axios.post(
             'https://knowledge-base-backend.leechiuhui.workers.dev/uploadToGoogleDriveReady',
@@ -291,12 +297,14 @@
             }
           );
 
-          console.log(response);
+          console.log('response:', response);
+          console.log('response.data:', response.data);
             uploadResult.value = [{
             status: '成功',
             message: '檔案已上傳至準備區'
           }];
         } catch (err) {
+          console.log('err:', err);
           console.error(err);
           const axiosError = err as AxiosError<ErrorResponse>;
           const errorData = axiosError.response?.data as ErrorResponse;

@@ -1,0 +1,1 @@
+import{c as a,b as n,o,_ as t}from"./index-CPmO6FBk.js";function r(c,e){return o(),a("main",null,e[0]||(e[0]=[n("h1",null,"創源工具AI-RAG 建構中 ...",-1),n("p",null,"建構中 ...",-1)]))}const s={},_=t(s,[["render",r],["__scopeId","data-v-093293b5"]]);export{_ as default};
