@@ -34,6 +34,8 @@
                     i.download.icon
                     | 下載檔案
         p(v-else) 未找到相關結果
+      .ui.dimmer(:class="{ active: isLoading }")
+        .ui.loader
 
 </template>
 
@@ -108,6 +110,7 @@ export default defineComponent({
 
 <style scoped>
 .ui.segment {
+  position: relative;
   margin-top: 20px;
   max-width: 100%;
 }
@@ -144,5 +147,28 @@ pre {
   word-wrap: break-word;
   margin: 0;
 }
+
+.ui.dimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.ui.dimmer.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+
 
 </style>
