@@ -30,6 +30,13 @@ a,
 a, button {
   cursor: pointer;
 }
+
+@media screen and (max-width: 768px) {
+  .fat-only {
+    display: none !important;
+  }
+}
+
 /* 
 @media (min-width: 1024px) {
   body {
