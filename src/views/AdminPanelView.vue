@@ -416,13 +416,16 @@
               },
             }
           );
-
-          console.log(response);
+          console.log('&&&&response:', response);
+          console.log('********response.data:', response.data);
           batchVectorizeResult.value = [{
             status: '成功',
             message: `已完成第 ${start} 到第 ${end} 個檔案的向量化`
           }];
+          console.log('********batchVectorizeResult:', batchVectorizeResult.value);
+
         } catch (err) {
+          console.log('********err:', err);
           console.error(err);
           const axiosError = err as AxiosError<ErrorResponse>;
           const errorData = axiosError.response?.data as ErrorResponse;
