@@ -60,6 +60,28 @@
               li 將文件從 Google Drive「準備上傳區」傳輸至 Cloudflare R2 存儲
               li 記錄到「Cloudflare D1」數據庫 欄位有：是否已經向量化並進Cloudflare索引庫、文件路徑、檔案名稱、檔案綱要、檔案備註、檔案大小、檔案類型、上傳時間
               li 移動至 Google Drive「已上傳區」進行備份
+            // 新增按鈕與結果顯示區
+            button.ui.primary.button(@click="executeGDToR2Upload")
+              i.upload.icon
+              | 執行「準備上傳區」-> R2 並寫DB(確認後執行)
+
+            // 顯示執行結果
+            .move-result
+              .loading(v-if="isMoveLoading") 載入中，請稍候...
+              .ui.positive.message(v-else-if="moveResult.length > 0")
+                h3 操作結果
+                table.ui.celled.table
+                  thead
+                    tr
+                      th 狀態
+                      th 訊息
+                  tbody
+                    tr(v-for="(item, index) in moveResult" :key="index")
+                      td {{ item.status }}
+                      td {{ item.message }}
+              .ui.negative.message(v-else-if="moveError") // 新增
+                h3 錯誤訊息
+                .description {{ moveError }}
 
         .step-card
           .step-number 03
@@ -265,6 +287,11 @@
       const isBatchVectorizeLoading = ref(false);
       const batchVectorizeError = ref('');
 
+      // 新增 用於執行 from GD to R2 的狀態
+      const isMoveLoading = ref(false); // 新增
+      const moveResult = ref<ResultItem[]>([]); // 新增
+      const moveError = ref(''); // 新增
+
       // 上傳至Google Drive準備區
       const uploadToGoogleDriveReady = async () => {
         if (!selectedFile.value) {
@@ -435,6 +462,40 @@
         }
       };
 
+      // 新增：執行「準備上傳區」-> R2 的函數
+      const executeGDToR2Upload = async () => {
+        const confirmed = confirm('是否確定要將Google Drive「準備上傳區」的檔案全部搬移到 R2 並寫入D1資料庫？');
+        if (!confirmed) return;
+
+      isMoveLoading.value = true;
+      moveError.value = '';
+      moveResult.value = [];
+
+      try {
+        const response = await axios.get(
+          'https://knowledge-base-backend.leechiuhui.workers.dev/uploadFromGDToR2',
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        // 將回傳結果寫入 moveResult
+        moveResult.value = [{
+          status: '成功',
+          message: '文件已從「準備上傳區」成功搬移至R2並寫入D1資料庫，並移動至「已上傳區」。'
+        }];
+      } catch (err) {
+        const axiosError = err as AxiosError<ErrorResponse>;
+        const errorData = axiosError.response?.data as ErrorResponse;
+        moveError.value = errorData?.message || '執行從GD到R2操作時發生錯誤';
+        } finally {
+          isMoveLoading.value = false;
+        }
+      };
+
+
 
       return {
         indexName,
@@ -461,6 +522,11 @@
         isBatchVectorizeLoading,
         batchVectorizeError,
         vectorizeR2FileRange,
+        // 新增的參數
+        isMoveLoading,
+        moveResult,
+        moveError,
+        executeGDToR2Upload,
       };
     },
   });
