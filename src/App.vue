@@ -6,21 +6,44 @@ header
     RouterLink.item(to="/")
       i.home.icon
       | 首頁-文件搜尋
-    //- RouterLink.item(to="/dragotesting") Drago測試
-    RouterLink.item(to="/ai")
-      i.chess.king.icon
-      | AI機器人
-      span.fat-only -創源工具RAG
-    RouterLink.item.fat-only(to="/ai-rag")
-      i.chess.queen.icon
-      | AI機器人-學校課程RAG
-    RouterLink.item.fat-only(to="/fulltextsearch") 全文檢索-創源工具
-    RouterLink.item.fat-only(to="/unifulltextsearch") 全文檢索-學校課程
+
+    //- 其他獨立項目
     RouterLink.item.fat-only(to="/faq") FAQ
     RouterLink.item.fat-only(to="/about") ABOUT
-    RouterLink.item.fat-only(to="/adminpanel") 創源工具後台管理
-    RouterLink.item.fat-only(to="/uniadminpanel") 學校課程後台管理
-    RouterLink.item.fat-only(to="/upload") 上傳檔案
+
+    //- AI相關的dropdown
+    .ui.simple.dropdown.item
+      i.chess.king.icon
+      | AI機器人
+      i.dropdown.icon
+      .menu
+        RouterLink.item(to="/ai")
+          i.chess.king.icon
+          | 創源工具RAG
+        RouterLink.item(to="/ai-rag")
+          i.chess.queen.icon
+          | 學校課程RAG
+
+    //- 全文檢索的dropdown
+    .ui.simple.dropdown.item.fat-only
+      i.search.icon
+      | 全文檢索
+      i.dropdown.icon
+      .menu
+        RouterLink.item(to="/fulltextsearch") 創源工具
+        RouterLink.item(to="/unifulltextsearch") 學校課程
+
+    //- 後台管理的dropdown
+    .ui.simple.dropdown.item.fat-only
+      i.settings.icon
+      | 後台管理
+      i.dropdown.icon
+      .menu
+        RouterLink.item(to="/adminpanel") 創源工具
+        RouterLink.item(to="/uniadminpanel") 學校課程
+        RouterLink.item.fat-only(to="/upload") 上傳檔案
+
+
 .small-spacer
 .ui.sidebar.vertical.menu#side-menu(:class="{'hidden': !sidebarVisible}")
   RouterLink.item(to='/', exact='', name="home")
