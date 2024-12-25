@@ -6,17 +6,33 @@
     .ui.form
       .field
         .ui.action.input
-          input(type="text" autofocus v-model="searchQuery" placeholder="請輸入搜尋關鍵字...")
+          input(
+            type="text"
+            autofocus
+            v-model="searchQuery"
+            placeholder="請輸入搜尋關鍵字..."
+            @keyup.enter="search"
+          )
           button.ui.button.primary(@click="search")
             i.search.icon
             | 搜尋
     div.ui.segment#search-results(v-if="searchResults.length > 0")
-      .ui.list
-        .item(v-for="result in searchResults")
-          .content
-            .header {{ result.filename }}
-            .description {{ result.content }}
-            button.ui.primary.button(@click="goToResult(result.filename)") 下載檔案
+      table.ui.stackable.celled.table
+        thead
+          tr
+            th 檔案名稱
+            th 內文
+            th.actions 操作
+        tbody
+          tr(v-for="result in searchResults")
+            td
+              div {{ result.filename }}
+            td
+              div(v-html="highlightKeyword(result.content)")
+            td.actions
+              button.ui.primary.button(@click="goToResult(result.filename)")
+                i.download.icon
+                | 下載檔案
 </template>
 
 <script lang="ts">
@@ -56,14 +72,25 @@ export default defineComponent({
     goToResult(filename: string) {
       // TODO: 實作下載檔案
       // 1. 使用API下載檔案
-      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/download/' + encodeURIComponent(filename))
-      .then((response) => {
-        console.log(response);
-      })
-        .catch((error) => {
-          console.error(error);
-        });
 
+      const fileUrl = 'https://knowledge-base-backend.leechiuhui.workers.dev/api/download/' + filename;
+      window.open(fileUrl, '_blank');
+
+    },
+    escapeHtml(text: string): string {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    },
+    highlightKeyword(content: string): string {
+      if (!this.searchQuery) return this.escapeHtml(content);
+      const escapedContent = this.escapeHtml(content);
+      const escapedQuery = this.escapeHtml(this.searchQuery);
+      const regex = new RegExp(escapedQuery, 'gi');
+      return escapedContent.replace(regex, match => `<mark>${match}</mark>`);
     }
   }
 })
@@ -76,5 +103,46 @@ export default defineComponent({
 
 #search-results {
   min-height: 300px;
+}
+
+mark {
+  background-color: yellow;
+  padding: 0.2em;
+  border-radius: 2px;
+}
+
+.ui.list .item .description {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.ui.table td {
+  vertical-align: top;
+}
+
+td {
+  min-width: 6em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+td > div {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.ui.table td.actions {
+  text-align: center;
+  min-width: 9.5em;
+}
+
+.ui.table td.actions button {
+  padding: 10px;
 }
 </style>
