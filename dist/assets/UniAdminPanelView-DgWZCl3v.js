@@ -1,0 +1,1 @@
+import{c as n,b as o,o as t,_ as r}from"./index-C9wf4eQL.js";function a(c,e){return t(),n("main",null,e[0]||(e[0]=[o("h1",null,"Under Construction ...",-1)]))}const s={},l=r(s,[["render",a],["__scopeId","data-v-00574bd1"]]);export{l as default};

@@ -91,7 +91,7 @@
           .step-content
             i.database.icon
             .description 找出D1資料庫中 未向量化的文件id->從R2提取文件後 向量化並存入 Cloudflare 索引庫->更新D1資料庫
-            .tech-tag setupVectorFromR2
+            .tech-tag setupVectorFromR2NotedD1.ts
             ul.step-details
               li select from Cloudflare D1 數據庫 欄位「是否已經向量化並進Cloudflare索引庫」 等於 false的id選出來
               li 將 選出的id 從 Cloudflare R2 存儲庫 提取後向量化存入 Cloudflare 索引庫
