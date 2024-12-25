@@ -7,9 +7,7 @@ header
       i.home.icon
       | 首頁-文件搜尋
 
-    //- 其他獨立項目
-    RouterLink.item.fat-only(to="/faq") FAQ
-    RouterLink.item.fat-only(to="/about") ABOUT
+
 
     //- AI相關的dropdown
     .ui.simple.dropdown.item
@@ -32,6 +30,10 @@ header
       .menu
         RouterLink.item(to="/fulltextsearch") 創源工具
         RouterLink.item(to="/unifulltextsearch") 學校課程
+
+    //- 其他獨立項目
+    RouterLink.item.fat-only(to="/faq") FAQ
+    RouterLink.item.fat-only(to="/about") ABOUT
 
     //- 後台管理的dropdown
     .ui.simple.dropdown.item.fat-only
