@@ -40,6 +40,7 @@ header
       i.dropdown.icon
       .menu
         RouterLink.item(to="/adminpanel") 創源工具
+        RouterLink.item(to="/d1adminpanel") 創源工具Cloudflare D1 後台管理
         RouterLink.item(to="/uniadminpanel") 學校課程
         RouterLink.item.fat-only(to="/upload") 上傳檔案
 
@@ -73,6 +74,9 @@ header
   RouterLink.item(to='/adminpanel', name="adminpanel")
     i.settings.icon
     | 創源工具後台管理
+  RouterLink.item(to='/d1adminpanel', name="d1adminpanel")
+    i.settings.icon
+    | 創源工具Cloudflare D1 後台管理
   RouterLink.item(to='/uniadminpanel', name="uniadminpanel")
     i.settings.icon
     | 學校課程後台管理

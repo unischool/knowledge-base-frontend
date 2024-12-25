@@ -48,6 +48,11 @@ const router = createRouter({
       component: () => import('../views/AdminPanelView.vue')
     },
     {
+      path: '/d1adminpanel',
+      name: 'd1adminpanel',
+      component: () => import('../views/D1AdminPanelView.vue')
+    },
+    {
       path: '/uniadminpanel',
       name: 'uniadminpanel',
       component: () => import('../views/UniAdminPanelView.vue')
