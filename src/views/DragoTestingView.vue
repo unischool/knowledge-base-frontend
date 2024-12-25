@@ -19,18 +19,18 @@
                 th 序號
                 th 問題
                 th 答案
-                th 匹配ID
-                th 相似度分數
-                th MetaData
+                //- th 匹配ID
+                //- th 相似度分數
+                //- th MetaData
                 th 動作
             tbody
               tr(v-for="(item, index) in result" :key="index")
                 td {{ index + 1 }}
                 td {{ message }}
                 td {{ item.aiResponse }}
-                td {{ item.id }}
-                td {{ item.score.toFixed(2) }}
-                td
+                //- td {{ item.id }}
+                //- td {{ item.score.toFixed(2) }}
+                //- td
                   pre {{ formatMetadata(item.metadata) }}
                 td
                   button.ui.primary.button(@click="downloadFile(item.metadata)", style="min-width:10em")
