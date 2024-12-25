@@ -60,7 +60,7 @@
             .tech-tag uploadFromGDToR2.ts
             ul.step-details
               //- li 1.將文件從 Google Drive「準備上傳區」傳輸至 Cloudflare R2 存儲
-              //- li 2.記錄到「Cloudflare D1」數據庫 欄位有：是否已經向量化並進Cloudflare索引庫、文件路徑、檔案名稱、檔案綱要、檔案備註、檔案大小、檔案類型、上傳時間
+              //- li 2.記���到「Cloudflare D1」數據庫 欄位有：是否已經向量化並進Cloudflare索引庫、文件路徑、檔案名稱、檔案綱要、檔案備註、檔案大小、檔案類型、上傳時間
               //- li 3.移動至 Google Drive「已上傳區」進行備份
             // 新增按鈕與結果顯示區
             button.ui.primary.button(@click="executeGDToR2Upload")
@@ -93,9 +93,32 @@
             .description 找出D1資料庫中 未向量化的文件id->從R2提取文件後 向量化並存入 Cloudflare 索引庫->更新D1資料庫
             .tech-tag setupVectorFromR2NotedD1.ts
             ul.step-details
-              li select from Cloudflare D1 數據庫 欄位「是否已經向量化並進Cloudflare索引庫」 等於 false的id選出來
-              li 將 選出的id 從 Cloudflare R2 存儲庫 提取後向量化存入 Cloudflare 索引庫
-              li 更新 Cloudflare D1 數據庫 將欄位「是否已經向量化並進Cloudflare索引庫」 等於 true
+              //- li select from Cloudflare D1 數據庫 欄位「是否已經向量化並進Cloudflare索引庫」 等於 false的id選出來
+              //- li 將 選出的id 從 Cloudflare R2 存儲庫 提取後向量化存入 Cloudflare 索引庫
+              //- li 更新 Cloudflare D1 數據庫 將欄位「是否已經向量化並進Cloudflare索引庫」 等於 true
+
+            // 新增按鈕與結果顯示區
+            button.ui.primary.button(@click="executeVectorization")
+              i.sync.icon
+              | 執行向量化處理(確認後執行)
+
+            // 顯示執行結果
+            .vectorize-result
+              .loading(v-if="isVectorizeLoading") 載入中，請稍候...
+              .ui.positive.message(v-if="vectorizeResult.length > 0")
+                h3 操作結果
+                table.ui.celled.table
+                  thead
+                    tr
+                      th 狀態
+                      th 訊息
+                  tbody
+                    tr(v-for="(item, index) in vectorizeResult" :key="index")
+                      td {{ item.status }}
+                      td {{ item.message }}
+              .ui.negative.message(v-if="vectorizeError")
+                h3 錯誤訊息
+                .description {{ vectorizeError }}
 
     h1.ui.header 創源工具-索引建立
 
@@ -258,7 +281,7 @@
 
           // 檢查檔案類型
           if (!allowedTypes.includes(file.type)) {
-            alert('請只上傳：doc, xls, pdf, jpg, oog, png, wav, mp3 的檔案格式');
+            alert('請只上傳：doc, xls, pdf, jpg, oog, png, wav, mp3 的���案格式');
             // 清除選擇的檔案
             input.value = '';
             selectedFile.value = null;
@@ -269,6 +292,9 @@
         }
       };
 
+      const isVectorizeLoading = ref(false);
+      const vectorizeResult = ref<ResultItem[]>([]);
+      const vectorizeError = ref('');
       //const uploadFileName = ref('');
       const uploadResult = ref<ResultItem[]>([]);
       const isUploadLoading = ref(false);
@@ -293,6 +319,41 @@
       const isMoveLoading = ref(false); // 新增
       const moveResult = ref<ResultItem[]>([]); // 新增
       const moveError = ref(''); // 新增
+
+      // 添加執行向量化的方法
+      const executeVectorization = async () => {
+        const confirmed = confirm('是否確定要執行向量化處理？');
+        if (!confirmed) return;
+
+        isVectorizeLoading.value = true;
+        vectorizeError.value = '';
+        vectorizeResult.value = [];
+
+        try {
+          const response = await axios.get(
+            'https://knowledge-base-backend.leechiuhui.workers.dev/setupVectorFromR2NotedD1',
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          vectorizeResult.value = [{
+            status: '成功',
+            message: '已完成文件向量化處理'
+          }];
+        } catch (err) {
+          const axiosError = err as AxiosError<ErrorResponse>;
+          const errorData = axiosError.response?.data as ErrorResponse;
+          vectorizeError.value = errorData?.message || '執行向量化處理時發生錯誤';
+        } finally {
+          isVectorizeLoading.value = false;
+        }
+      };
+
+
+
 
       // 上傳至Google Drive準備區
       const uploadToGoogleDriveReady = async () => {
@@ -529,6 +590,10 @@
         moveResult,
         moveError,
         executeGDToR2Upload,
+        isVectorizeLoading,
+        vectorizeResult,
+        vectorizeError,
+        executeVectorization,
       };
     },
   });
