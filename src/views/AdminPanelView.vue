@@ -10,10 +10,12 @@
       .workflow-steps
         .step-card
           .step-number 01
-          h3 本地端/Local端文件「doc xls pdf jpg oog png wav mp3」上傳至 Google Drive
+          h3 從本地端/Local端 將文件「doc xls pdf jpg oog png wav mp3」上傳至 Google Drive「準備上傳區」
           .step-content
             i.google.drive.icon
-            .description 從本地端/Local端上傳文件到 Google Drive「準備上傳區」
+            .description
+            .step-content
+            .tech-tag uploadToGoogleDriveReady.ts
             // 新增的表單部分
             .ui.form
               .field
@@ -51,15 +53,15 @@
 
         .step-card
           .step-number 02
-          h3 Cloudflare R2 存儲
+          h3 將文件從 Google Drive「準備上傳區」傳輸至 Cloudflare R2 存儲->寫入Cloudflare D1資料庫->移動至 Google Drive「已上傳區」進行備份
           .step-content
             i.cloud.upload.icon
-            .description 將文件傳輸至 Cloudflare R2 存儲
-            .tech-tag main2.ts
+            .description
+            .tech-tag uploadFromGDToR2.ts
             ul.step-details
-              li 將文件從 Google Drive「準備上傳區」傳輸至 Cloudflare R2 存儲
-              li 記錄到「Cloudflare D1」數據庫 欄位有：是否已經向量化並進Cloudflare索引庫、文件路徑、檔案名稱、檔案綱要、檔案備註、檔案大小、檔案類型、上傳時間
-              li 移動至 Google Drive「已上傳區」進行備份
+              //- li 1.將文件從 Google Drive「準備上傳區」傳輸至 Cloudflare R2 存儲
+              //- li 2.記錄到「Cloudflare D1」數據庫 欄位有：是否已經向量化並進Cloudflare索引庫、文件路徑、檔案名稱、檔案綱要、檔案備註、檔案大小、檔案類型、上傳時間
+              //- li 3.移動至 Google Drive「已上傳區」進行備份
             // 新增按鈕與結果顯示區
             button.ui.primary.button(@click="executeGDToR2Upload")
               i.upload.icon
@@ -88,7 +90,7 @@
           h3 向量化處理
           .step-content
             i.database.icon
-            .description 將 R2 文件向量化並存入 Cloudflare 索引庫
+            .description 找出D1資料庫中 未向量化的文件id->從R2提取文件後 向量化並存入 Cloudflare 索引庫->更新D1資料庫
             .tech-tag setupVectorFromR2
             ul.step-details
               li select from Cloudflare D1 數據庫 欄位「是否已經向量化並進Cloudflare索引庫」 等於 false的id選出來
