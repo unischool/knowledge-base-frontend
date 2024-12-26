@@ -35,7 +35,7 @@
                   .ui.segment.square-block(style="background-color: #9DC3E6;")
                     h4 依編年事紀索引
                     p 詳細內容一
-              .three.column.row
+              .three.column.stackable.row
                 .column
                   .ui.segment.square-block(style="background-color: #FFE599;")
                     h4 依工具類別索引
