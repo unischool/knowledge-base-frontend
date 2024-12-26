@@ -3,53 +3,51 @@
     h1.ui.header 至青宇宙學校知識庫
 
     .ui.container
-      .ui.grid
-        .two.column.row
-          .column
-            .ui.segment.color-block(style="background-color: #A9D08E;")
-              h3 第一類
+      .ui.stackable.grid
+        .four.wide.column
+          .ui.segment.color-block(style="background-color: #A9D08E;")
+            h3 第一類
               p 至青宇宙學校歷年課程影像 錄音 逐字稿 ppt資料
               .ui.grid.inner-grid
-                .two.column.row
-                  .column
-                    .ui.segment.inner-color-block(style="background-color: #D4E7C7;")
-                      h4 初階課程
-                      p 詳細內容一
-                  .column
-                    .ui.segment.inner-color-block(style="background-color: #D4E7C7;")
-                      h4 進階課程
-                      p 詳細內容二
-          .column
-            .ui.segment.color-block(style="background-color: #FFD966;")
-              h3 第二類
-              p 創源工具
-              .ui.grid.inner-grid
-                .three.column.row
-                  .column
-                    .ui.segment.square-block(style="background-color: #FFE599;")
-                      h4 吳至青博士引薦源起
-                      p 詳細內容一
-                  .column
-                    .ui.segment.square-block(style="background-color: #F4B084;")
-                      h4 生命創源工具源起
-                      p 詳細內容二
-                  .column
-                    .ui.segment.square-block(style="background-color: #9DC3E6;")
-                      h4 依編年事紀索引
-                      p 詳細內容一
-                .three.column.row
-                  .column
-                    .ui.segment.square-block(style="background-color: #FFE599;")
-                      h4 依工具類別索引
-                      p 詳細內容二
-                  .column
-                    .ui.segment.square-block(style="background-color: #F4B084;")
-                      h4 重要事件
-                      p 詳細內容二
-                  .column
-                    .ui.segment.square-block(style="background-color: #9DC3E6;")
-                      h4 應用
-                      p 詳細內容二
+                .sixteen.wide.column
+                  .ui.segment.inner-color-block(style="background-color: #D4E7C7;")
+                    h4 初階課程
+                    p 詳細內容一
+                .sixteen.wide.column
+                  .ui.segment.inner-color-block(style="background-color: #D4E7C7;")
+                    h4 進階課程
+                    p 詳細內容二
+        .twelve.wide.column
+          .ui.segment.color-block(style="background-color: #FFD966;")
+            h3 第二類
+            p 創源工具
+            .ui.grid.inner-grid
+              .three.column.stackable.row
+                .column
+                  .ui.segment.square-block(style="background-color: #FFE599;")
+                    h4 吳至青博士引薦源起
+                    p 詳細內容一
+                .column
+                  .ui.segment.square-block(style="background-color: #F4B084;")
+                    h4 生命創源工具源起
+                    p 詳細內容二
+                .column
+                  .ui.segment.square-block(style="background-color: #9DC3E6;")
+                    h4 依編年事紀索引
+                    p 詳細內容一
+              .three.column.row
+                .column
+                  .ui.segment.square-block(style="background-color: #FFE599;")
+                    h4 依工具類別索引
+                    p 詳細內容二
+                .column
+                  .ui.segment.square-block(style="background-color: #F4B084;")
+                    h4 重要事件
+                    p 詳細內容二
+                .column
+                  .ui.segment.square-block(style="background-color: #9DC3E6;")
+                    h4 應用
+                    p 詳細內容二
           //- .column
           //-   .ui.segment.color-block(style="background-color: #F4B084;")
           //-     h3 重要事件
