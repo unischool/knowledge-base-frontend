@@ -2,10 +2,10 @@
   .ui.container
     .ui.active.dimmer(v-if="isLoading")
       .ui.text.loader 搜尋中...
-    h1 全文檢索-創源工具
-    .ui.form
-      .field
-        .ui.action.input
+    .ui.segment.color-block(style="background-color: #FFD966;")
+      h1 全文檢索 - 創源工具
+      .ui.input-area
+        .ui.input
           input(
             type="text"
             autofocus
@@ -13,10 +13,11 @@
             placeholder="請輸入搜尋關鍵字..."
             @keyup.enter="search"
           )
-          button.ui.button.primary(@click="search")
-            i.search.icon
-            | 搜尋
-    div.ui.segment#search-results(v-if="searchResults.length > 0")
+        button.ui.button.primary(@click="search")
+          i.search.icon
+          | 搜尋
+    .ui.segment.color-block(style="background-color: #A9D08E; margin-top: 20px;", v-if="searchResults.length > 0")
+      h2 查詢結果
       table.ui.stackable.celled.table
         thead
           tr
@@ -24,7 +25,7 @@
             th 內文
             th.actions 操作
         tbody
-          tr(v-for="result in searchResults")
+          tr(v-for="result in searchResults" :key="result.filename")
             td
               div {{ result.filename }}
             td
@@ -33,116 +34,107 @@
               button.ui.primary.button(@click="goToResult(result.filename)")
                 i.download.icon
                 | 下載檔案
-</template>
+    p(v-else-if="!isLoading") 未找到相關結果
+  </template>
 
-<script lang="ts">
-import axios from 'axios';
-import { defineComponent } from 'vue';
+  <script lang="ts">
+  import axios from 'axios';
+  import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'FullTextSearchView',
-  data() {
-    return {
-      searchQuery: '',
-      isLoading: false,
-      searchResults: []
+  export default defineComponent({
+    name: 'FullTextSearchView',
+    data() {
+      return {
+        searchQuery: '',
+        isLoading: false,
+        searchResults: []
+      };
+    },
+    methods: {
+      search() {
+        if (!this.searchQuery.trim()) {
+          alert('請輸入搜尋關鍵字');
+          return;
+        }
+        this.isLoading = true;
+        axios
+          .get(
+            'https://knowledge-base-backend.leechiuhui.workers.dev/api/search/' +
+              encodeURIComponent(this.searchQuery)
+          )
+          .then((response) => {
+            this.searchResults = response.data;
+            this.isLoading = false;
+          })
+          .catch((error) => {
+            console.error(error);
+            this.isLoading = false;
+          });
+      },
+      goToResult(filename: string) {
+        const fileUrl =
+          'https://knowledge-base-backend.leechiuhui.workers.dev/api/download/' + filename;
+        window.open(fileUrl, '_blank');
+      },
+      escapeHtml(text: string): string {
+        return text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      },
+      highlightKeyword(content: string): string {
+        if (!this.searchQuery) return this.escapeHtml(content);
+        const escapedContent = this.escapeHtml(content);
+        const escapedQuery = this.escapeHtml(this.searchQuery);
+        const regex = new RegExp(escapedQuery, 'gi');
+        return escapedContent.replace(regex, (match) => `<mark>${match}</mark>`);
+      }
     }
-  },
-  methods: {
-    search() {
-      // TODO: 實作全文檢索
-      // 1. 使用API取得搜尋結果
-      // 結果的json格式應如下(backend待橋接)：
-      // {
-      //   "filename": "example.pdf",
-      //   "content": "This is the content of the file."
-      // }
+  });
+  </script>
 
-      this.isLoading = true;
-      axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/search/' + encodeURIComponent(this.searchQuery))
-      .then((response) => {
-        this.searchResults = response.data;
-        this.isLoading = false;
-      })
-        .catch((error) => {
-          console.error(error);
-          this.isLoading = false;
-        });
-    },
-    goToResult(filename: string) {
-      // TODO: 實作下載檔案
-      // 1. 使用API下載檔案
-
-      const fileUrl = 'https://knowledge-base-backend.leechiuhui.workers.dev/api/download/' + filename;
-      window.open(fileUrl, '_blank');
-
-    },
-    escapeHtml(text: string): string {
-      return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    },
-    highlightKeyword(content: string): string {
-      if (!this.searchQuery) return this.escapeHtml(content);
-      const escapedContent = this.escapeHtml(content);
-      const escapedQuery = this.escapeHtml(this.searchQuery);
-      const regex = new RegExp(escapedQuery, 'gi');
-      return escapedContent.replace(regex, match => `<mark>${match}</mark>`);
-    }
+  <style scoped>
+  .ui.container {
+    margin-top: 20px;
   }
-})
-</script>
 
-<style scoped>
-.ui.action.input {
-  max-width: 500px;
-}
+  .color-block {
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    transition: transform 0.3s ease;
+  }
 
-#search-results {
-  min-height: 300px;
-}
+  .color-block:hover {
+    transform: scale(1.05);
+  }
 
-mark {
-  background-color: yellow;
-  padding: 0.2em;
-  border-radius: 2px;
-}
+  .ui.input-area {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
 
-.ui.list .item .description {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  max-height: 300px;
-  overflow-y: auto;
-}
+  mark {
+    background-color: yellow;
+    padding: 0.2em;
+    border-radius: 2px;
+  }
 
-.ui.table td {
-  vertical-align: top;
-}
+  .ui.table td {
+    vertical-align: top;
+    word-wrap: break-word;
+  }
 
-td {
-  min-width: 6em;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
+  .ui.table td.actions {
+    text-align: center;
+    min-width: 150px;
+  }
 
-td > div {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.ui.table td.actions {
-  text-align: center;
-  min-width: 9.5em;
-}
-
-.ui.table td.actions button {
-  padding: 10px;
-}
-</style>
+  .ui.table td.actions button {
+    padding: 10px;
+  }
+  </style>
