@@ -10,7 +10,7 @@ header
 
 
     //- AI相關的dropdown
-    .ui.simple.dropdown.item
+    .ui.simple.dropdown.item(@click="handleDropdownClick($event)")
       i.chess.king.icon
       | AI機器人
       i.dropdown.icon
@@ -23,7 +23,7 @@ header
           | 學校課程RAG
 
     //- 全文檢索的dropdown
-    .ui.simple.dropdown.item.fat-only
+    .ui.simple.dropdown.item.fat-only(@click="handleDropdownClick($event)")
       i.search.icon
       | 全文檢索
       i.dropdown.icon
@@ -128,6 +128,27 @@ export default defineComponent({
       axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/keywordsWithFiles').then((response) => {
         this.keywordsWithFiles = response.data
       })
+    },
+    handleDropdownClick(event: Event) {
+      const dropdown = event.currentTarget as HTMLElement;
+      dropdown.classList.toggle('active');
+      dropdown.classList.toggle('visible');
+
+      const menu = dropdown.querySelector('.menu') as HTMLElement;
+      if (menu) {
+        menu.classList.toggle('visible');
+      }
+
+      // 點擊其他地方時關閉dropdown
+      const closeDropdown = (e: Event) => {
+        if (!dropdown.contains(e.target as Node)) {
+          dropdown.classList.remove('active', 'visible');
+          menu?.classList.remove('visible');
+          document.removeEventListener('click', closeDropdown);
+        }
+      };
+
+      document.addEventListener('click', closeDropdown);
     }
   }
 })
@@ -199,6 +220,17 @@ nav a:first-of-type {
   transform: translateX(-100%); /* 隱藏時向左滑動 */
 }
 
+/* 新增移動設備的樣式 */
+@media (max-width: 767px) {
+  .ui.dropdown .menu {
+    position: absolute !important;
+    display: none;
+  }
+
+  .ui.dropdown .menu.visible {
+    display: block !important;
+  }
+}
 </style>
 <!--
 <style scoped>
