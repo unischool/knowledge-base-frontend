@@ -5,7 +5,7 @@ header
       i.icon.bars
     RouterLink.item(to="/")
       i.home.icon
-      | 首頁-文件搜尋
+      span.fat-only 首頁-文件搜尋
 
 
 
@@ -130,16 +130,24 @@ Login(
 <script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import Login from './components/login.vue'
 import { defineComponent, ref } from 'vue'
 import axios from 'axios'
 
 
 export default defineComponent({
   setup() {
+    const showLogin = ref(false)
     const sidebarVisible = ref(false)
+    const email = ref('')
     const courses = ref([])
     const keywordsWithFiles = ref([])
-    return { sidebarVisible, courses, keywordsWithFiles }
+    return { showLogin, sidebarVisible,
+      email, courses, keywordsWithFiles
+    }
+  },
+  components: {
+    Login
   },
   mounted() {
     axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/Courses')
@@ -157,6 +165,9 @@ export default defineComponent({
     })
   },
   methods: {
+    toggleLogin() {
+      this.showLogin = !this.showLogin
+    },
     toggleSidebar() {
       this.sidebarVisible = !this.sidebarVisible
     },

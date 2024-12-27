@@ -181,6 +181,10 @@ export default defineComponent({
 <style scoped>
 #login-bg {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 1000000;
   transition: background 0.3s ease;
 }
