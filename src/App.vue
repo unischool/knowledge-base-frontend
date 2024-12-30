@@ -7,8 +7,6 @@ header
       i.home.icon
       span.fat-only 首頁-文件搜尋
 
-
-
     //- AI相關的dropdown
     .ui.simple.dropdown.item(@click="handleDropdownClick($event)")
       i.chess.king.icon
@@ -127,11 +125,16 @@ Login(
 
 <script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import Login from './components/login.vue'
+import Login from './components/Login.vue'
 import { defineComponent, ref } from 'vue'
 import axios from 'axios'
 import InApp from 'detect-inapp'; // 導入InApp以偵測瀏覽器內部環境
-
+import { getAuth, sendEmailVerification,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  setPersistence, browserLocalPersistence, inMemoryPersistence
+} from 'firebase/auth';
+import { get, ref as dbRef, onValue, set } from 'firebase/database';
+import { auth, database } from './firebase';
 
 export default defineComponent({
   setup() {
@@ -196,6 +199,171 @@ export default defineComponent({
       };
 
       document.addEventListener('click', closeDropdown);
+    },
+    logout () {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const vm = this; // 儲存當前Vue實例
+      auth.signOut().then(function() {
+        vm.user = null; // 清除用戶資料
+        vm.users = {}; // 清除所有用戶資料
+        vm.uid = ''; // 清除用戶ID
+        vm.photoURL = ''; // 清除用戶頭像URL
+        vm.$nextTick().then(() => {
+          vm.$router.push('/'); // 導航回首頁
+        })
+      });
+    },
+    async registerWithEmail(normalRegister_email: string, normalRegister_password: string, normalRegister_keeploggedin: boolean) {
+      if (!normalRegister_password || typeof normalRegister_password !== 'string') {
+        alert('接收的密碼無效，請確認輸入');
+        return;
+      }
+
+      try {
+        const auth = getAuth();
+        const userCredential = await createUserWithEmailAndPassword(auth, normalRegister_email, normalRegister_password);
+        const user = userCredential.user;
+
+        if (user && user.email) {
+          this.email = user.email;
+          this.uid = user.uid;
+          this.photoURL = 'https://we.alearn.org.tw/logo-new.png';
+
+          const pvdata = [{
+            displayName: this.email?.split('@')[0] || 'Unknown',
+            email: this.email,
+            photoURL: this.photoURL
+          }];
+          this.user = { email: this.email, photoURL: this.photoURL, providerData: pvdata };
+
+          const userRef = dbRef(database, 'users/' + this.uid);
+          const snapshot = await get(userRef);
+          if (!snapshot.exists()) {
+            await set(userRef, {
+              email: this.email,
+              name: this.email?.split('@')[0] || 'Unknown',
+              connect_me: this.email,
+              photoURL: this.photoURL,
+              login_method: 'email'
+            });
+          }
+
+          await sendEmailVerification(user);
+          alert('驗證郵件已發送，請檢查您的郵箱(含垃圾信箱)以完成驗證。');
+          this.logout();
+        } else {
+          console.error('User or user email is undefined after registration');
+          alert('註冊過程中發生錯誤，請稍後再試。');
+        }
+      } catch (error: any) {
+        if (error.code === 'auth/email-already-in-use') {
+          alert('此電子郵件已被使用，請使用其他電子郵件或嘗試登入。');
+        } else {
+          console.error("註冊失敗：", error);
+          alert("註冊失敗：" + error.message);
+        }
+      }
+    },
+    async loginWithEmail(autoredirect: boolean, normalRegister_email: string, normalRegister_password: string, normalRegister_keeploggedin: boolean) {
+      try {
+        if (normalRegister_keeploggedin) {
+          await setPersistence(auth, browserLocalPersistence);
+        } else {
+          await setPersistence(auth, inMemoryPersistence);
+        }
+        const userCredential = await signInWithEmailAndPassword(auth, normalRegister_email, normalRegister_password);
+        const user = userCredential.user;
+
+        if (!user.emailVerified) {
+          alert('您的電子郵件尚未驗證，請檢查您的郵箱並完成驗證。');
+          this.resendVerificationEmail()
+          this.logout();
+          return;
+        }
+
+        this.emailVerified = true;
+        console.log('登入成功：', user);
+        this.updateUserData(user);
+
+        if (autoredirect && user.emailVerified) {
+          this.$nextTick().then(() => {
+            this.$router.push('/profile');
+          });
+        }
+      } catch (error: any) {
+        console.error("登入失敗：", error);
+        let errorMessage = "登入失敗：";
+        if (error.message.includes('auth/wrong-password')) {
+          errorMessage = "密碼錯誤，請檢查後再試。";
+        } else if (error.message.includes('auth/user-not-found')) {
+          errorMessage = "帳號不存在，請確認您的電子郵件地址。";
+        } else if (error.message.includes('auth/invalid-email')) {
+          errorMessage = "無效的電子郵件地址，請重新輸入。";
+        } else if (error.message.includes('auth/too-many-requests')) {
+          errorMessage = "嘗試次數過多，請稍後再試。";
+        } else {
+          errorMessage += error.message;
+        }
+        alert(errorMessage);
+      }
+    },
+    resendVerificationEmail() {
+      const user = getAuth().currentUser;
+      if (user) {
+        sendEmailVerification(user).then(() => {
+          console.log('驗證郵件已重新發送。');
+        }).catch((error) => {
+          console.error('重新發送驗證郵件失敗：', error);
+          // alert('重新發送驗證郵件失敗，請稍後再試。');
+        });
+      }
+    },
+    async updateUserData(user: any) {
+      if (!user) {
+        console.error('User is undefined in updateUserData');
+        return;
+      }
+      this.email = user.email || null;
+      this.uid = user.uid;
+      this.photoURL = user.photoURL ? decodeURI(user.photoURL) : "https://we.alearn.org.tw/logo-new.png";
+      this.emailVerified = user.emailVerified;
+
+      const pvdata = user.providerData || [{
+        displayName: this.email?.split('@')[0] || 'Unknown',
+        email: this.email,
+        photoURL: this.photoURL
+      }];
+
+      // 直接獲取當前用戶的資料
+      await this.fetchUserData(pvdata);
+    },
+    async fetchUserData(pvdata: any[]) {
+      try {
+        if (!this.uid) {
+          console.error('No user ID available');
+          return;
+        }
+
+        // 只監聽當前用戶的資料
+        const userRef = ref(database, `users/${this.uid}`);
+        onValue(userRef, (snapshot) => {
+          const userData = snapshot.val();
+          if (userData) {
+            this.user = { ...userData, providerData: pvdata };
+            if (this.user.photoURL && this.user.photoURL !== 'undefined') {
+              this.photoURL = this.user.photoURL;
+            }
+          } else {
+            this.user = { providerData: pvdata };
+          }
+        }, (error) => {
+          this.user = { providerData: pvdata };
+          console.error("Error fetching user data:", error);
+        });
+      } catch (error) {
+        console.error("Error in fetchUserData:", error);
+        this.user = { providerData: pvdata };
+      }
     }
   }
 })

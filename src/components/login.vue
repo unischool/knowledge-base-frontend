@@ -72,18 +72,9 @@ export default defineComponent({
     };
 
     const validateEmail = async (email: string): Promise<boolean> => {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const re2 = /@alearn.org.tw$/;
-
-      if (re.test(String(email).toLowerCase()) && re2.test(String(email).toLowerCase())) {
-        return true;
-      }
-
-      try {
-        const response = await axios.get(`https://members-backend.alearn13994229.workers.dev/is_member_email/${email}`);
-        return response.data.isMember === true;
-      } catch (error) {
-        console.error('Error checking member email:', error);
+      // 基本的 email 格式驗證
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})+$/;
+      if (!emailRegex.test(String(email).toLowerCase())) {
         return false;
       }
     };
@@ -95,11 +86,6 @@ export default defineComponent({
 
       if (!users_email.value || !user_password.value) {
         window.alert('請先填寫email和密碼');
-        return;
-      }
-
-      if (!(await validateEmail(users_email.value))) {
-        alert('請使用@aleran.org.tw網域的Email，或是會員名冊上有的Email');
         return;
       }
 
@@ -115,11 +101,6 @@ export default defineComponent({
       let autoredirect = true;
       console.log('Login clicked');
       const path = window.location.pathname;
-
-      /* if (!validateEmail(users_email.value)) {
-        alert('請用@alearn.org.tw的Email登入');
-        return;
-      } */
 
       if (path === '/friends' || path === '/maps' || path === '/privacy-policy' || path.startsWith('/flag') || path.startsWith('/group')) {
         autoredirect = false;
