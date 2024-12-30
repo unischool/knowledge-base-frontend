@@ -21,7 +21,7 @@
 
             .ui.fluid.large.button(@click.prevent="loginWithEmail", style="background-color: #e47e10 ; color: white; font-weight: bold;", :class="{disabled: isInApp}") 登入
 
-            a.small.forgot-password(@click="resetPassword") 忘記密碼
+            a.small.forgot-password(@click.stop.prevent="resetPassword") 忘記密碼
 
           form.ui.large.form
             .ui.segment(style="border: none; padding-top: 10px;")
@@ -118,7 +118,7 @@ export default defineComponent({
       console.log("Reset password function triggered");
       console.log("Email for reset:", users_email.value);
 
-      if (!validateEmail(users_email.value)) {
+      if (!users_email.value || !validateEmail(users_email.value)) {
         alert('請先輸入有效的電子郵件地址');
         return;
       }
