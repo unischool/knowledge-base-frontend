@@ -345,7 +345,7 @@ export default defineComponent({
         }
 
         // 只監聽當前用戶的資料
-        const userRef = ref(database, `users/${this.uid}`);
+        const userRef = dbRef(database, `users/${this.uid}`);
         onValue(userRef, (snapshot) => {
           const userData = snapshot.val();
           if (userData) {
