@@ -2576,6 +2576,13 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
 
+detect-inapp@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/detect-inapp/-/detect-inapp-1.4.0.tgz#9cc42c837495aeba98b57914cf88e266b9dab944"
+  integrity sha512-2S29Udznzsno138s33j/yR/9uzFU25rt/1DWecnpoj5oCmjvsCt4tFe+6go6drTyuLodz7ZNQSGbl17cDDx/+Q==
+  dependencies:
+    lodash "^4.17.5"
+
 devtools-protocol@^0.0.1025565:
   version "0.0.1025565"
   resolved "https://registry.yarnpkg.com/devtools-protocol/-/devtools-protocol-0.0.1025565.tgz#0b3da0d3714c556aad06b0ec60f4fde68a701a90"
@@ -4037,7 +4044,7 @@ lodash.union@^4.6.0:
   resolved "https://registry.yarnpkg.com/lodash.union/-/lodash.union-4.6.0.tgz#48bb5088409f16f1821666641c44dd1aaae3cd88"
   integrity sha512-c4pB2CdGrGdjMKYLA+XiRDO7Y0PRQbm/Gzg8qMj+QH+pFVAoTp5sBpO0odL3FjoPCGjK96p6qsP+yQoiLoOBcw==
 
-lodash@^4.17.21:
+lodash@^4.17.21, lodash@^4.17.5:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==

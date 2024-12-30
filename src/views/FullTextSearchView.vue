@@ -34,7 +34,7 @@
               button.ui.primary.button(@click="goToResult(result.filename)")
                 i.download.icon
                 | 下載檔案
-    p(v-else-if="!isLoading") 未找到相關結果
+    p(v-else-if="!isLoading && searchResults.length === 0 && searchQuery.trim() !== ''") 未找到相關結果
   </template>
 
   <script lang="ts">

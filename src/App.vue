@@ -106,11 +106,9 @@ header
 .ui.container
   RouterView(
     @toggleLogin="toggleLogin",
-    @locate="locate",
     :uid="uid",
     :isInApp="isInApp",
     :user="user",
-    :users="users",
     :photoURL="photoURL",
     :email="email",
     :emailVerified="emailVerified"
@@ -129,10 +127,10 @@ Login(
 
 <script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 import Login from './components/login.vue'
 import { defineComponent, ref } from 'vue'
 import axios from 'axios'
+import InApp from 'detect-inapp'; // 導入InApp以偵測瀏覽器內部環境
 
 
 export default defineComponent({
@@ -140,29 +138,31 @@ export default defineComponent({
     const showLogin = ref(false)
     const sidebarVisible = ref(false)
     const email = ref('')
-    const courses = ref([])
-    const keywordsWithFiles = ref([])
-    return { showLogin, sidebarVisible,
-      email, courses, keywordsWithFiles
+    const emailVerified = ref(false)
+    const uid = ref('')
+    const user = ref({})
+    const photoURL = ref('')
+    const inApp = new InApp(window.navigator.userAgent);
+    // 初始假設為 InApp 庫的偵測結果
+    const isInApp = ref(inApp.isInApp);
+
+    return {
+      showLogin,
+      sidebarVisible,
+      email,
+      emailVerified,
+      uid,
+      isInApp,
+      user,
+      photoURL
     }
   },
   components: {
-    Login
+    Login,
+    RouterLink,
+    RouterView
   },
   mounted() {
-    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/Courses')
-      .then(response => {
-        this.courses = response.data
-      })
-      .catch(error => {
-        console.error('出錯了', error)
-      })
-
-    axios.get('https://knowledge-base-backend.leechiuhui.workers.dev/api/keywordsWithFiles').then((response) => {
-      this.keywordsWithFiles = response.data
-    }).catch(error => {
-      console.error('出錯了', error)
-    })
   },
   methods: {
     toggleLogin() {
