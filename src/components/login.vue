@@ -98,20 +98,16 @@ export default defineComponent({
     };
 
     const loginWithEmail = () => {
-      let autoredirect = true;
       console.log('Login clicked');
       const path = window.location.pathname;
 
-      if (path === '/friends' || path === '/maps' || path === '/privacy-policy' || path.startsWith('/flag') || path.startsWith('/group')) {
-        autoredirect = false;
-      }
 
       if (!user_password.value || typeof user_password.value !== 'string') {
         alert('密碼無效，請重新輸入');
         return;
       }
 
-      emit('loginWithEmail', autoredirect, users_email.value, user_password.value, keeploggedin.value);
+      emit('loginWithEmail', users_email.value, user_password.value, keeploggedin.value);
     };
 
     const resetPassword = () => {

@@ -52,9 +52,6 @@ header
         img.ui.avatar.image(v-if="photoURL" :src="photoURL" alt="User Avatar" @error="useDefaultAvatar" @load="onImageLoad")
         i.user.icon(v-else)
         .menu
-          router-link.item(to="/profile")
-            i.flag.icon
-            | 我的旗幟
           button.no-border.ui.item(v-if="uid", @click="logout")
             i.sign-out.icon
             | 登出
@@ -264,7 +261,7 @@ export default defineComponent({
         }
       }
     },
-    async loginWithEmail(autoredirect: boolean, normalRegister_email: string, normalRegister_password: string, normalRegister_keeploggedin: boolean) {
+    async loginWithEmail(normalRegister_email: string, normalRegister_password: string, normalRegister_keeploggedin: boolean) {
       try {
         if (normalRegister_keeploggedin) {
           await setPersistence(auth, browserLocalPersistence);
@@ -284,12 +281,6 @@ export default defineComponent({
         this.emailVerified = true;
         console.log('登入成功：', user);
         this.updateUserData(user);
-
-        if (autoredirect && user.emailVerified) {
-          this.$nextTick().then(() => {
-            this.$router.push('/profile');
-          });
-        }
       } catch (error: any) {
         console.error("登入失敗：", error);
         let errorMessage = "登入失敗：";
