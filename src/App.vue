@@ -163,6 +163,22 @@ export default defineComponent({
     RouterView
   },
   mounted() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const vm = this;
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        vm.uid = user.uid;
+        vm.email = user.email || '';
+        vm.photoURL = user.photoURL || 'https://we.alearn.org.tw/logo-new.png';
+        vm.emailVerified = user.emailVerified;
+        vm.updateUserData(user);
+      } else {
+        vm.uid = '';
+        vm.email = '';
+        vm.photoURL = '';
+        vm.emailVerified = false;
+      }
+    });
   },
   methods: {
     toggleLogin() {
