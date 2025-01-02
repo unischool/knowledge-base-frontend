@@ -7,6 +7,17 @@
             | 本系統不支援facebook, line等app內部瀏覽，請用一般瀏覽器開啟，方可登入，謝謝
           h2.ui.black.header(style="font-size: 1.5rem; font-weight: 600;")
             | 登入您的帳號
+
+
+          //- Google Login Button
+          button.ui.large.primary.button(@click.prevent="loginWithGoogle", style="background-color: #e47e10; color: white; font-weight: bold;")
+            i.google.icon
+            | 使用Google登入
+
+          //- or
+          .ui.horizontal.divider
+            | 或
+
           //- Email & Password Login Form
           form.ui.form.segment(style="border-radius: 10px; padding: 15px; background-color: #f0f0f0;")
             .field
@@ -19,7 +30,7 @@
                 i.lock.icon
                 input(type="password" name="user_password" placeholder="Password", style="font-size: 14px;", v-model="user_password", autocomplete, @click.stop)
 
-            .ui.fluid.large.button(@click.prevent="loginWithEmail", style="background-color: #e47e10 ; color: white; font-weight: bold;", :class="{disabled: isInApp}") 登入
+            .ui.fluid.large.button(@click.prevent="loginWithEmail", style="background-color: #e47e10 ; color: white; font-weight: bold;", :class="{disabled: isInApp}") Email登入
 
             a.small.forgot-password(@click.stop.prevent="resetPassword") 忘記密碼
 
@@ -37,7 +48,6 @@
 <script lang="ts">
 import { defineComponent, ref, watch, onMounted } from 'vue';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
-import axios from 'axios';
 
 export default defineComponent({
   name: "LoginBox",
@@ -77,6 +87,11 @@ export default defineComponent({
       if (!emailRegex.test(String(email).toLowerCase())) {
         return false;
       }
+    };
+
+    const loginWithGoogle = () => {
+      console.log('Google login clicked');
+      emit('loginWithGoogle');
     };
 
     const registerWithEmail = async () => {
@@ -147,6 +162,7 @@ export default defineComponent({
       user_password,
       keeploggedin,
       toggleLogin,
+      loginWithGoogle,
       registerWithEmail,
       loginWithEmail,
       resetPassword,

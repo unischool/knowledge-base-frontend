@@ -116,7 +116,8 @@ Login(
   @logout="logout",
   @registerWithEmail="registerWithEmail",
   @loginWithEmail="loginWithEmail",
-  @resendVerificationEmail="resendVerificationEmail"
+  @resendVerificationEmail="resendVerificationEmail",
+  @loginWithGoogle="loginWithGoogle"
 )
 </template>
 
@@ -332,7 +333,7 @@ export default defineComponent({
       }
       this.email = user.email || null;
       this.uid = user.uid;
-      this.photoURL = user.photoURL ? decodeURI(user.photoURL) : "https://we.alearn.org.tw/logo-new.png";
+      this.photoURL = user.photoURL || "https://we.alearn.org.tw/logo-new.png";
       this.emailVerified = user.emailVerified;
 
       const pvdata = user.providerData || [{
@@ -341,7 +342,6 @@ export default defineComponent({
         photoURL: this.photoURL
       }];
 
-      // 直接獲取當前用戶的資料
       await this.fetchUserData(pvdata);
     },
     async fetchUserData(pvdata: any[]) {
@@ -351,14 +351,13 @@ export default defineComponent({
           return;
         }
 
-        // 只監聽當前用戶的資料
         const userRef = dbRef(database, `users/${this.uid}`);
         onValue(userRef, (snapshot) => {
           const userData = snapshot.val();
           if (userData) {
             this.user = { ...userData, providerData: pvdata };
-            if (this.user.photoURL && this.user.photoURL !== 'undefined') {
-              this.photoURL = this.user.photoURL;
+            if (userData.photoURL && userData.photoURL !== 'undefined' && userData.photoURL !== 'https://we.alearn.org.tw/logo-new.png') {
+              this.photoURL = userData.photoURL;
             }
           } else {
             this.user = { providerData: pvdata };
