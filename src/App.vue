@@ -128,7 +128,7 @@ import axios from 'axios'
 import InApp from 'detect-inapp'; // 導入InApp以偵測瀏覽器內部環境
 import { getAuth, sendEmailVerification,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  setPersistence, browserLocalPersistence, inMemoryPersistence
+  setPersistence, browserLocalPersistence, inMemoryPersistence, GoogleAuthProvider, signInWithPopup
 } from 'firebase/auth';
 import { get, ref as dbRef, onValue, set } from 'firebase/database';
 import { auth, database } from './firebase';
@@ -371,7 +371,34 @@ export default defineComponent({
         console.error("Error in fetchUserData:", error);
         this.user = { providerData: pvdata };
       }
-    }
+    },
+    async loginWithGoogle() {
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // 更新用戶資料到 Firebase Database
+        const userRef = dbRef(database, 'users/' + user.uid);
+        const snapshot = await get(userRef);
+
+        if (!snapshot.exists()) {
+          await set(userRef, {
+            email: user.email,
+            name: user.displayName || user.email?.split('@')[0] || 'Unknown',
+            connect_me: user.email,
+            photoURL: user.photoURL || 'https://we.alearn.org.tw/logo-new.png',
+            login_method: 'google'
+          });
+        }
+
+        this.updateUserData(user);
+        this.showLogin = false;
+      } catch (error: any) {
+        console.error("Google登入失敗：", error);
+        alert("Google登入失敗：" + error.message);
+      }
+    },
   }
 })
 </script>
