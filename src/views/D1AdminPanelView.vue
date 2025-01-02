@@ -32,6 +32,7 @@ main.d1-admin-container
             th 檔案類型
             th 上傳時間
             th 向量化時間
+            th 檔案內容
             th 操作
         tbody
           tr(v-for="record in records" :key="record.id")
@@ -43,16 +44,30 @@ main.d1-admin-container
             td {{ record.filepath }}
             td {{ record.filename }}
             td {{ formatFileSize(record.filesize) }}
-            td {{ record.filetype }}
+            td.file-type {{ record.filetype }}
             td {{ formatDate(record.uploadeddate) }}
             td {{ record.indexeddate ? formatDate(record.indexeddate) : '尚未向量化' }}
+            td.content-cell
+              span(v-if="!editMode") {{ record.content }}
+              textarea(v-else v-model="editContent", rows="10")
             td
-              button.ui.mini.button(
-                @click="deleteRecord(record.id)"
-                :class="{ loading: isDeletingId === record.id }"
-              )
-                i.trash.icon
-                | 刪除
+              .ui.mini.vertical.buttons
+                button.ui.mini.primary.button(v-if="!editMode"
+                  @click="editRecord(record.id)"
+                )
+                  i.edit.icon
+                  | 編輯
+                button.ui.mini.primary.button(v-else
+                  @click="saveEdit(record.id)"
+                )
+                  i.save.icon
+                  | 保存
+                button.ui.mini.button(
+                  @click="deleteRecord(record.id)"
+                  :class="{ loading: isDeletingId === record.id }"
+                )
+                  i.trash.icon
+                  | 刪除
 </template>
 
 <script lang="ts">
@@ -87,6 +102,8 @@ export default defineComponent({
     const isLoading = ref(false)
     const error = ref('')
     const isDeletingId = ref<number | null>(null)
+    const editMode = ref(false)
+    const editContent = ref('')
 
     const loadRecords = async () => {
       try {
@@ -123,7 +140,7 @@ export default defineComponent({
 
       isDeletingId.value = id
       try {
-        // 實作刪除邏輯
+        // 待實作刪除邏輯
         await axios.delete(`https://knowledge-base-backend.leechiuhui.workers.dev/D1AdminPanel/${id}`)
         records.value = records.value.filter(record => record.id !== id)
       } catch (err) {
@@ -132,6 +149,16 @@ export default defineComponent({
       } finally {
         isDeletingId.value = null
       }
+    }
+
+    const editRecord = (id: number) => {
+      editMode.value = true
+      editContent.value = records.value.find(record => record.id === id)?.content || ''
+    }
+
+    const saveEdit = async (id: number) => {
+      // 待串接保存編輯內容的邏輯
+      console.log('saveEdit', editContent.value)
     }
 
     onMounted(() => {
@@ -145,8 +172,39 @@ export default defineComponent({
       isDeletingId,
       formatFileSize,
       formatDate,
-      deleteRecord
+      deleteRecord,
+      editMode,
+      editContent,
+      editRecord,
+      saveEdit
     }
   }
 })
 </script>
+
+<style scoped>
+
+th, td {
+  min-width: 5em;
+}
+
+.file-type {
+  max-width: 5em;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.content-cell {
+  width: 200px;
+  height: 160px;
+  overflow: auto;
+  text-overflow: ellipsis;
+  white-space: pre-wrap;
+  display: block;
+  word-break: break-all;
+}
+
+.data-table table td {
+  vertical-align: top;
+}
+</style>
