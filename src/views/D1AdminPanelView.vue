@@ -141,7 +141,11 @@ export default defineComponent({
       isDeletingId.value = id
       try {
         // 待實作刪除邏輯
-        await axios.delete(`https://knowledge-base-backend.leechiuhui.workers.dev/D1AdminPanel/${id}`)
+        await axios.delete(`https://knowledge-base-backend.leechiuhui.workers.dev/D1AdminPanel`, {
+          data: {
+            id: id
+          }
+        })
         records.value = records.value.filter(record => record.id !== id)
       } catch (err) {
         console.error('刪除錯誤:', err)
@@ -159,6 +163,12 @@ export default defineComponent({
     const saveEdit = async (id: number) => {
       // 待串接保存編輯內容的邏輯
       console.log('saveEdit', editContent.value)
+      await axios.patch(`https://knowledge-base-backend.leechiuhui.workers.dev/D1AdminPanel`, {
+        data: {
+          id: id,
+          content: editContent.value
+        }
+      })
     }
 
     onMounted(() => {
