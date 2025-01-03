@@ -67,7 +67,7 @@ main.d1-admin-container
                   :class="{ loading: isDeletingId === record.id }"
                 )
                   i.trash.icon
-                  | 刪除
+                  | 刪除整個檔案
 </template>
 
 <script lang="ts">
@@ -168,10 +168,8 @@ export default defineComponent({
       editingId.value = null
       editMode.value = false
       await axios.patch(`https://knowledge-base-backend.leechiuhui.workers.dev/D1AdminPanel`, {
-        data: {
-          id: id,
-          content: editContent.value
-        }
+        id: id,
+        content: editContent.value
       }).then((response) => {
         console.log('response', response)
         loadRecords()
