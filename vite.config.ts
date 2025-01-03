@@ -17,7 +17,7 @@ export default defineConfig({
       renderPage: './nightwatch/index.html'
     }),
     checker({
-      typescript: true,
+      typescript: true
     }),
   ],
   resolve: {
