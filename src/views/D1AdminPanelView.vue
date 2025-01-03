@@ -48,7 +48,7 @@ main.d1-admin-container
             td {{ formatDate(record.uploadeddate) }}
             td {{ record.indexeddate ? formatDate(record.indexeddate) : '尚未向量化' }}
             td.content-cell
-              span(v-if="!editMode") {{ record.content }}
+              span(v-if="!editMode || editingId !== record.id") {{ record.content }}
               textarea(v-else v-model="editContent", rows="10")
             td
               .ui.mini.vertical.buttons
@@ -104,6 +104,7 @@ export default defineComponent({
     const isDeletingId = ref<number | null>(null)
     const editMode = ref(false)
     const editContent = ref('')
+    const editingId = ref<number | null>(null)
 
     const loadRecords = async () => {
       try {
@@ -156,6 +157,7 @@ export default defineComponent({
     }
 
     const editRecord = (id: number) => {
+      editingId.value = id
       editMode.value = true
       editContent.value = records.value.find(record => record.id === id)?.content || ''
     }
@@ -163,11 +165,16 @@ export default defineComponent({
     const saveEdit = async (id: number) => {
       // 待串接保存編輯內容的邏輯
       console.log('saveEdit', editContent.value)
+      editingId.value = null
+      editMode.value = false
       await axios.patch(`https://knowledge-base-backend.leechiuhui.workers.dev/D1AdminPanel`, {
         data: {
           id: id,
           content: editContent.value
         }
+      }).then((response) => {
+        console.log('response', response)
+        loadRecords()
       })
     }
 
@@ -183,6 +190,7 @@ export default defineComponent({
       formatFileSize,
       formatDate,
       deleteRecord,
+      editingId,
       editMode,
       editContent,
       editRecord,
