@@ -123,7 +123,7 @@
 
   <script lang="ts">
   import { RouterLink, RouterView } from 'vue-router'
-  import Login from './components/Login.vue'
+  import Login from './components/LoginComponent.vue'
   import { defineComponent, ref } from 'vue'
   import axios from 'axios'
   import InApp from 'detect-inapp'; // 導入InApp以偵測瀏覽器內部環境
