@@ -107,6 +107,7 @@ header
     :photoURL="photoURL",
     :email="email",
     :emailVerified="emailVerified"
+
   )
 Login(
   v-if="showLogin"
@@ -118,12 +119,13 @@ Login(
   @loginWithEmail="loginWithEmail",
   @resendVerificationEmail="resendVerificationEmail",
   @loginWithGoogle="loginWithGoogle"
+
 )
 </template>
 
 <script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import Login from './components/Login.vue'
+import login from './components/login.vue'
 import { defineComponent, ref } from 'vue'
 import axios from 'axios'
 import InApp from 'detect-inapp'; // 導入InApp以偵測瀏覽器內部環境
@@ -141,11 +143,15 @@ export default defineComponent({
     const email = ref('')
     const emailVerified = ref(false)
     const uid = ref('')
-    const user = ref({})
+    //const user = ref({})
+    const user = ref<any>({})  // 修改為允許 null
+    const users = ref<Record<string, any>>({})  // 添加 users 引用
+
     const photoURL = ref('')
     const inApp = new InApp(window.navigator.userAgent);
     // 初始假設為 InApp 庫的偵測結果
     const isInApp = ref(inApp.isInApp);
+    const keywordsWithFiles = ref({})
 
     return {
       showLogin,
@@ -155,11 +161,13 @@ export default defineComponent({
       uid,
       isInApp,
       user,
-      photoURL
+      users,
+      photoURL,
+      keywordsWithFiles
     }
   },
   components: {
-    Login,
+    login,
     RouterLink,
     RouterView
   },
@@ -218,7 +226,8 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const vm = this; // 儲存當前Vue實例
       auth.signOut().then(function() {
-        vm.user = null; // 清除用戶資料
+        //vm.user = null; // 清除用戶資料
+        vm.user = {} // 改為空對象而不是 null
         vm.users = {}; // 清除所有用戶資料
         vm.uid = ''; // 清除用戶ID
         vm.photoURL = ''; // 清除用戶頭像URL

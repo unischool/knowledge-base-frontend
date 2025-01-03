@@ -81,12 +81,20 @@ export default defineComponent({
       emit('toggleLogin');
     };
 
+    // const validateEmail = async (email: string): Promise<boolean> => {
+    //   // 基本的 email 格式驗證
+    //   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})+$/;
+    //   if (!emailRegex.test(String(email).toLowerCase())) {
+    //     return false;
+    //   }
+
+    // };
     const validateEmail = async (email: string): Promise<boolean> => {
-      // 基本的 email 格式驗證
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})+$/;
-      if (!emailRegex.test(String(email).toLowerCase())) {
+      if (!email.includes('@')) {
         return false;
       }
+  // 如果判斷通過，就回傳 true
+      return true;
     };
 
     const loginWithGoogle = () => {
