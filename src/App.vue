@@ -51,7 +51,7 @@
         .ui.simple.dropdown.item(v-else)
           img.ui.avatar.image(v-if="photoURL" :src="photoURL" alt="User Avatar" @error="useDefaultAvatar" @load="onImageLoad")
           i.user.icon(v-else)
-          .menu
+          .menu#right-dropdown-menu
             button.no-border.ui.item(v-if="uid", @click="logout")
               i.sign-out.icon
               | 登出
@@ -128,11 +128,17 @@
   import axios from 'axios'
   import InApp from 'detect-inapp'; // 導入InApp以偵測瀏覽器內部環境
   import { getAuth, sendEmailVerification,
+    linkWithCredential,
     createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    fetchSignInMethodsForEmail,
+    EmailAuthProvider,
     setPersistence, browserLocalPersistence, inMemoryPersistence, GoogleAuthProvider, signInWithPopup
   } from 'firebase/auth';
   import { get, ref as dbRef, onValue, set } from 'firebase/database';
   import { auth, database } from './firebase';
+
+
+
 
   export default defineComponent({
     setup() {
@@ -230,14 +236,14 @@
           })
         });
       },
-      async registerWithEmail(normalRegister_email: string, normalRegister_password: string, normalRegister_keeploggedin: boolean) {
+      async registerWithEmail(normalRegister_email: string, normalRegister_password: string, normalRegister_keeploggedin: boolean, turnstileToken: string) {
         if (!normalRegister_password || typeof normalRegister_password !== 'string') {
           alert('接收的密碼無效，請確認輸入');
           return;
         }
 
         try {
-          const auth = getAuth();
+          // const auth = getAuth();
           const userCredential = await createUserWithEmailAndPassword(auth, normalRegister_email, normalRegister_password);
           const user = userCredential.user;
 
@@ -274,7 +280,30 @@
           }
         } catch (error: any) {
           if (error.code === 'auth/email-already-in-use') {
-            alert('此電子郵件已被使用，請使用其他電子郵件或嘗試登入。');
+            try {
+              const auth = getAuth();
+              console.log(normalRegister_email);
+              const methods = await fetchSignInMethodsForEmail(auth, normalRegister_email);
+              console.log(methods);
+              if (methods.includes('google.com')) {
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(auth, provider);
+                const credential = EmailAuthProvider.credential(normalRegister_email, normalRegister_password);
+                await linkWithCredential(result.user, credential);
+                alert('帳號已成功整合。');
+                this.updateUserData(result.user);
+                if (normalRegister_keeploggedin) {
+                  await setPersistence(auth, browserLocalPersistence);
+                }
+              } else if (methods.includes('password')) {
+                alert('此電子郵件已被使用，請使用其他電子郵件或嘗試登入。');
+              } else {
+                alert('此電子郵件已被使用，請使用其他電子郵件或嘗試登入。');
+              }
+            } catch (linkError: any) {
+              console.error("帳號整合失敗", linkError);
+              alert("帳號整合失敗：" + linkError.message);
+            }
           } else {
             console.error("註冊失敗：", error);
             alert("註冊失敗：" + error.message);
@@ -380,6 +409,10 @@
           const result = await signInWithPopup(auth, provider);
           const user = result.user;
 
+          const photoURL = user.providerData[0].photoURL || 'https://we.alearn.org.tw/logo-new.png'
+
+          console.log('user', user)
+          console.log('photoURL', photoURL)
           // 更新用戶資料到 Firebase Database
           const userRef = dbRef(database, 'users/' + user.uid);
           const snapshot = await get(userRef);
@@ -389,9 +422,14 @@
               email: user.email,
               name: user.displayName || user.email?.split('@')[0] || 'Unknown',
               connect_me: user.email,
-              photoURL: user.photoURL || 'https://we.alearn.org.tw/logo-new.png',
+              photoURL: photoURL || 'https://we.alearn.org.tw/logo-new.png',
               login_method: 'google'
             });
+          } else {
+            console.log('user already exists')
+            if (snapshot.val().photoURL !== photoURL) {
+              await set(dbRef(database, 'users/' + user.uid + '/photoURL'), photoURL);
+            }
           }
 
           this.updateUserData(user);
@@ -475,11 +513,44 @@
   @media (max-width: 767px) {
     .ui.dropdown .menu {
       position: absolute !important;
-      display: none;
     }
 
     .ui.dropdown .menu.visible {
       display: block !important;
+    }
+  }
+
+  /* 修改下拉選單的樣式 */
+  .ui.dropdown {
+    position: relative !important;
+  }
+
+  /* 手機版樣式 */
+  @media (max-width: 767px) {
+    .ui.dropdown .menu {
+      position: absolute !important;
+      left: auto !important;
+      right: 0 !important;
+      margin-top: 0 !important;
+      background: white !important;
+      border: 1px solid rgba(34, 36, 38, 0.15) !important;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+      z-index: 1000 !important;
+    }
+
+    .ui.dropdown.active .menu {
+      display: block !important;
+    }
+
+    .ui.dropdown .menu > .item {
+      padding: 0.8em 1.14285714em !important;
+      display: block !important;
+      width: fit-content !important;
+      border-top: 1px solid rgba(34, 36, 38, 0.1) !important;
+    }
+
+    .ui.dropdown .menu > .item:first-child {
+      border-top: none !important;
     }
   }
   </style>
