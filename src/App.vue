@@ -45,21 +45,7 @@ header
         RouterLink.item(to="/d1adminpanel") 創源工具Cloudflare D1 後台管理
         RouterLink.item(to="/uniadminpanel") 學校課程
         RouterLink.item.fat-only(to="/upload") 上傳檔案
-    .right.menu
-      button.no-border.ui.item(@click="toggleLogin", v-if="!uid")
-        i.user.icon
-        | 登入
-        span.fat-only / 註冊
-      .ui.simple.dropdown.item(v-else)
-        img.ui.avatar.image(v-if="photoURL" :src="photoURL" alt="User Avatar" @error="useDefaultAvatar" @load="onImageLoad")
-        i.user.icon(v-else)
-        .menu
-          router-link.item(to="/profile")
-            i.flag.icon
-            | 我的旗幟
-          button.no-border.ui.item(v-if="uid", @click="logout")
-            i.sign-out.icon
-            | 登出
+
 
 .small-spacer
 .ui.sidebar.vertical.menu#side-menu(:class="{'hidden': !sidebarVisible}")
@@ -101,30 +87,8 @@ header
     | 上傳檔案
 .ui.sidebar.bg(:class="{'hidden': !sidebarVisible}", @click="toggleSidebar")
 
-//- .ui.container
-//-   RouterView(:courses="courses" :keywordsWithFiles="keywordsWithFiles", @fileUploaded="handleFileUploaded")
 .ui.container
-  RouterView(
-    @toggleLogin="toggleLogin",
-    @locate="locate",
-    :uid="uid",
-    :isInApp="isInApp",
-    :user="user",
-    :users="users",
-    :photoURL="photoURL",
-    :email="email",
-    :emailVerified="emailVerified"
-  )
-Login(
-  v-if="showLogin"
-  :showLogin="showLogin"
-  :isInApp="false"
-  @toggleLogin="toggleLogin",
-  @logout="logout",
-  @registerWithEmail="registerWithEmail",
-  @loginWithEmail="loginWithEmail",
-  @resendVerificationEmail="resendVerificationEmail"
-)
+  RouterView(:courses="courses" :keywordsWithFiles="keywordsWithFiles", @fileUploaded="handleFileUploaded")
 </template>
 
 <script lang="ts">
