@@ -34,7 +34,7 @@
       RouterLink.item.fat-only(to="/about") ABOUT
 
       //- 後台管理的dropdown
-      .ui.simple.dropdown.item.fat-only
+      .ui.simple.dropdown.item.fat-only(v-if="uid")
         i.settings.icon
         | 後台管理
         i.dropdown.icon
