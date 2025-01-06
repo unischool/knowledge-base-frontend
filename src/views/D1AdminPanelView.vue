@@ -49,10 +49,18 @@
               td {{ record.indexeddate ? formatDate(record.indexeddate) : '尚未向量化' }}
               td.content-cell
                 span(v-if="!editMode || editingId !== record.id") {{ record.content }}
+                //- div.edit-overlay(v-if="editMode && editingId === record.id")
+                //-   textarea.edit-textarea(v-model="editContent", rows="50")
+                //-   button.ui.primary.button(@click="saveEdit(record.id)")
+                //-     i.save.icon 保存
                 div.edit-overlay(v-if="editMode && editingId === record.id")
-                  textarea.edit-textarea(v-model="editContent", rows="10")
-                  button.ui.primary.button(@click="saveEdit(record.id)")
-                    i.save.icon 保存
+                  textarea.edit-textarea(v-model="editContent", rows="100")
+                  div.edit-buttons
+                    button.ui.primary.button(@click="saveEdit(record.id)")
+                      i.save.icon 保存
+                    button.ui.button(@click="cancelEdit")
+                      i.cancel.icon 取消
+
               td
                 .ui.mini.vertical.buttons
                   button.ui.mini.primary.button(v-if="!editMode"
@@ -108,6 +116,10 @@
       const editMode = ref(false)
       const editContent = ref('')
       const editingId = ref<number | null>(null)
+      const originalContent = ref('')
+
+
+
 
       const loadRecords = async () => {
         try {
@@ -159,11 +171,19 @@
         }
       }
 
+
+
       const editRecord = (id: number) => {
         editingId.value = id
         editMode.value = true
-        editContent.value = records.value.find(record => record.id === id)?.content || ''
+        const record = records.value.find(record => record.id === id)
+        if (record) {
+          originalContent.value = record.content
+          editContent.value = record.content
+        }
       }
+
+
 
       const saveEdit = async (id: number) => {
         // 待串接保存編輯內容的邏輯
@@ -177,6 +197,12 @@
           console.log('response', response)
           loadRecords()
         })
+      }
+
+      const cancelEdit = () => {
+        editContent.value = originalContent.value
+        editingId.value = null
+        editMode.value = false
       }
 
       onMounted(() => {
@@ -195,7 +221,8 @@
         editMode,
         editContent,
         editRecord,
-        saveEdit
+        saveEdit,
+        cancelEdit
       }
     }
   })
@@ -228,7 +255,8 @@ th, td {
 }
 
 /* 浮動編輯樣式 */
-.edit-overlay {
+
+/* .edit-overlay {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -250,7 +278,42 @@ th, td {
   border-radius: 5px;
   resize: none;
   box-sizing: border-box;
+} */
+.edit-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%; /* 擴大寬度 */
+  padding: 30px; /* 增加內距 */
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  z-index: 1000;
 }
+
+.edit-textarea {
+  width: 100%;
+  height: 550px; /* 編輯框高度增加 */
+  font-size: 1.2rem; /* 增大字體 */
+  padding: 15px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.edit-buttons {
+  display: flex;
+  justify-content: flex-end; /* 按鈕靠右對齊 */
+  gap: 10px; /* 按鈕之間的間距 */
+  margin-top: 20px;
+}
+
+.edit-buttons button {
+  min-width: 100px; /* 按鈕寬度 */
+}
+
 
 body {
   overflow: hidden; /* 防止背景滾動 */
