@@ -22,6 +22,7 @@
         thead
           tr
             th 檔案名稱
+            th 大綱
             th 內文
             th.actions 操作
         tbody
@@ -29,12 +30,14 @@
             td
               div {{ result.filename }}
             td
+              div(v-html="highlightKeyword(result.fileoutline)")
+            td
               div(v-html="highlightKeyword(result.content)")
             td.actions
               button.ui.primary.button(@click="goToResult(result.filename)")
                 i.download.icon
                 | 下載檔案
-    p(v-else-if="!isLoading && searchResults.length === 0 && searchQuery.trim() !== ''") 未找到相關結果
+    p(v-else-if="!isLoading && afterSearch && searchResults.length === 0 && searchQuery.trim() !== ''") 未找到相關結果
   </template>
 
   <script lang="ts">
@@ -47,6 +50,7 @@
       return {
         searchQuery: '',
         isLoading: false,
+        afterSearch: false,
         searchResults: []
       };
     },
@@ -65,10 +69,12 @@
           .then((response) => {
             this.searchResults = response.data;
             this.isLoading = false;
+            this.afterSearch = true;
           })
           .catch((error) => {
             console.error(error);
             this.isLoading = false;
+            this.afterSearch = false;
           });
       },
       goToResult(filename: string) {
@@ -77,7 +83,7 @@
         window.open(fileUrl, '_blank');
       },
       escapeHtml(text: string): string {
-        return text
+        return (text || '')
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
@@ -125,6 +131,7 @@
   }
 
   .ui.table td {
+    min-width: 100px;
     vertical-align: top;
     word-wrap: break-word;
   }

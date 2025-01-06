@@ -32,7 +32,7 @@
               th 檔案類型
               th 上傳時間
               th 向量化時間
-              th 檔案內容
+              th 檔案大綱
               th 操作
           tbody
             tr(v-for="record in records" :key="record.id")
@@ -47,14 +47,15 @@
               td.file-type {{ record.filetype }}
               td {{ formatDate(record.uploadeddate) }}
               td {{ record.indexeddate ? formatDate(record.indexeddate) : '尚未向量化' }}
-              td.content-cell
-                span(v-if="!editMode || editingId !== record.id") {{ record.content }}
+              td.Outline-cell
+                span(v-if="!editMode || editingId !== record.id")
+                  | {{ record.fileoutline || record.content }}
                 //- div.edit-overlay(v-if="editMode && editingId === record.id")
-                //-   textarea.edit-textarea(v-model="editContent", rows="50")
+                //-   textarea.edit-textarea(v-model="editOutline", rows="50")
                 //-   button.ui.primary.button(@click="saveEdit(record.id)")
                 //-     i.save.icon 保存
                 div.edit-overlay(v-if="editMode && editingId === record.id")
-                  textarea.edit-textarea(v-model="editContent", rows="100")
+                  textarea.edit-textarea(v-model="editOutline", rows="100")
                   div.edit-buttons
                     button.ui.primary.button(@click="saveEdit(record.id)")
                       i.save.icon 保存
@@ -114,9 +115,9 @@
       const error = ref('')
       const isDeletingId = ref<number | null>(null)
       const editMode = ref(false)
-      const editContent = ref('')
+      const editOutline = ref('')
       const editingId = ref<number | null>(null)
-      const originalContent = ref('')
+      const originalOutline = ref('')
 
 
 
@@ -178,8 +179,11 @@
         editMode.value = true
         const record = records.value.find(record => record.id === id)
         if (record) {
-          originalContent.value = record.content
-          editContent.value = record.content
+          console.log('record', record)
+          console.log('record.fileoutline', record.fileoutline)
+          console.log('record.content', record.content)
+          originalOutline.value = record.fileoutline || record.content || ''
+          editOutline.value = record.fileoutline || record.content || ''
         }
       }
 
@@ -187,12 +191,12 @@
 
       const saveEdit = async (id: number) => {
         // 待串接保存編輯內容的邏輯
-        console.log('saveEdit', editContent.value)
+        console.log('saveEdit', editOutline.value)
         editingId.value = null
         editMode.value = false
         await axios.patch(`https://knowledge-base-backend.leechiuhui.workers.dev/D1AdminPanel`, {
           id: id,
-          content: editContent.value
+          fileoutline: editOutline.value
         }).then((response) => {
           console.log('response', response)
           loadRecords()
@@ -200,7 +204,7 @@
       }
 
       const cancelEdit = () => {
-        editContent.value = originalContent.value
+        editOutline.value = originalOutline.value
         editingId.value = null
         editMode.value = false
       }
@@ -219,7 +223,7 @@
         deleteRecord,
         editingId,
         editMode,
-        editContent,
+        editOutline,
         editRecord,
         saveEdit,
         cancelEdit
@@ -240,7 +244,7 @@ th, td {
   white-space: nowrap;
 }
 
-.content-cell {
+.Outline-cell {
   width: 200px;
   height: 160px;
   overflow: auto;
