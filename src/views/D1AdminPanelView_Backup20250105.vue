@@ -49,10 +49,7 @@
               td {{ record.indexeddate ? formatDate(record.indexeddate) : '尚未向量化' }}
               td.content-cell
                 span(v-if="!editMode || editingId !== record.id") {{ record.content }}
-                div.edit-overlay(v-if="editMode && editingId === record.id")
-                  textarea.edit-textarea(v-model="editContent", rows="10")
-                  button.ui.primary.button(@click="saveEdit(record.id)")
-                    i.save.icon 保存
+                textarea(v-else v-model="editContent", rows="10")
               td
                 .ui.mini.vertical.buttons
                   button.ui.mini.primary.button(v-if="!editMode"
@@ -202,57 +199,28 @@
   </script>
 
   <style scoped>
-/* 基本樣式 */
-th, td {
-  min-width: 5em;
-}
 
-.file-type {
-  max-width: 5em;
-  overflow: auto;
-  white-space: nowrap;
-}
+  th, td {
+    min-width: 5em;
+  }
 
-.content-cell {
-  width: 200px;
-  height: 160px;
-  overflow: auto;
-  text-overflow: ellipsis;
-  white-space: pre-wrap;
-  display: block;
-  word-break: break-all;
-}
+  .file-type {
+    max-width: 5em;
+    overflow: auto;
+    white-space: nowrap;
+  }
 
-.data-table table td {
-  vertical-align: top;
-}
+  .content-cell {
+    width: 200px;
+    height: 160px;
+    overflow: auto;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    display: block;
+    word-break: break-all;
+  }
 
-/* 浮動編輯樣式 */
-.edit-overlay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  z-index: 1000;
-}
-
-.edit-textarea {
-  width: 100%;
-  height: 300px;
-  font-size: 1rem;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: none;
-  box-sizing: border-box;
-}
-
-body {
-  overflow: hidden; /* 防止背景滾動 */
-}
-</style>
+  .data-table table td {
+    vertical-align: top;
+  }
+  </style>
