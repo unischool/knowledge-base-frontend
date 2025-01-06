@@ -65,12 +65,12 @@
                   )
                     i.save.icon
                     | 保存
-                  button.ui.mini.button(
-                    @click="deleteRecord(record.id)"
-                    :class="{ loading: isDeletingId === record.id }"
-                  )
-                    i.trash.icon
-                    | 刪除整個檔案
+                  //- button.ui.mini.button(
+                  //-   @click="deleteRecord(record.id)"
+                  //-   :class="{ loading: isDeletingId === record.id }"
+                  //- )
+                  //-   i.trash.icon
+                  //-   | 刪除整個檔案
   </template>
 
   <script lang="ts">
