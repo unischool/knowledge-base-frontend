@@ -48,6 +48,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, onMounted } from 'vue';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import axios from 'axios';
 
 export default defineComponent({
   name: "LoginBox",
@@ -81,20 +82,20 @@ export default defineComponent({
       emit('toggleLogin');
     };
 
-    // const validateEmail = async (email: string): Promise<boolean> => {
-    //   // 基本的 email 格式驗證
-    //   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})+$/;
-    //   if (!emailRegex.test(String(email).toLowerCase())) {
-    //     return false;
-    //   }
-
-    // };
     const validateEmail = async (email: string): Promise<boolean> => {
-      if (!email.includes('@')) {
+    //  基本的 email 格式驗證
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})+$/;
+      if (!emailRegex.test(String(email).toLowerCase())) {
         return false;
       }
-  // 如果判斷通過，就回傳 true
-      return true;
+      try {
+          const response = await axios.get(`https://knowledge-base-backend.leechiuhui.workers.dev/is_member_email/${email}`);
+          console.log('Response:', response.data);
+          return response.data.isMember === true;
+      } catch (error) {
+        console.error('Error checking member email:', error);
+        return false;
+      }
     };
 
     const loginWithGoogle = () => {

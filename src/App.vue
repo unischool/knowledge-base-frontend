@@ -106,7 +106,8 @@
       :user="user",
       :photoURL="photoURL",
       :email="email",
-      :emailVerified="emailVerified"
+      :emailVerified="emailVerified",
+      :role="role"
     )
   Login(
     v-if="showLogin"
@@ -153,8 +154,10 @@
       // 初始假設為 InApp 庫的偵測結果
       const isInApp = ref(inApp.isInApp);
       const keywordsWithFiles = ref({})
+      const role = ref('guest')
 
       return {
+        role,
         showLogin,
         sidebarVisible,
         email,
@@ -174,12 +177,22 @@
     mounted() {
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const vm = this;
-      auth.onAuthStateChanged((user) => {
+      auth.onAuthStateChanged(async (user) => {
         if (user) {
           vm.uid = user.uid;
           vm.email = user.email || '';
           vm.photoURL = user.photoURL || 'https://we.alearn.org.tw/logo-new.png';
           vm.emailVerified = user.emailVerified;
+          const isMember = await axios.get(`https://knowledge-base-backend.leechiuhui.workers.dev/is_member_email/${vm.email}`);
+          console.log('isMember', isMember);
+          if (isMember.data.isMember === false) {
+            vm.role = 'guest';
+            // alert('您不是創源工具的會員，請聯絡管理員。');
+            vm.logout();
+            return;
+          } else {
+            vm.role = isMember.data.role;
+          }
           vm.updateUserData(user);
         } else {
           vm.uid = '';
@@ -312,6 +325,17 @@
       },
       async loginWithEmail(normalRegister_email: string, normalRegister_password: string, normalRegister_keeploggedin: boolean) {
         try {
+
+          const isMember = await axios.get(`https://knowledge-base-backend.leechiuhui.workers.dev/is_member_email/${normalRegister_email}`);
+          console.log('isMember', isMember);
+          if (isMember.data.isMember === false) {
+            alert('您不是創源工具的會員，請聯絡管理員。');
+            this.logout();
+            return;
+          } else {
+            this.role = isMember.data.role;
+          }
+
           if (normalRegister_keeploggedin) {
             await setPersistence(auth, browserLocalPersistence);
           } else {
@@ -328,6 +352,8 @@
           }
 
           this.emailVerified = true;
+
+
           console.log('登入成功：', user);
           this.updateUserData(user);
         } catch (error: any) {
@@ -411,29 +437,38 @@
 
           const photoURL = user.providerData[0].photoURL || 'https://we.alearn.org.tw/logo-new.png'
 
-          console.log('user', user)
-          console.log('photoURL', photoURL)
-          // 更新用戶資料到 Firebase Database
-          const userRef = dbRef(database, 'users/' + user.uid);
-          const snapshot = await get(userRef);
-
-          if (!snapshot.exists()) {
-            await set(userRef, {
-              email: user.email,
-              name: user.displayName || user.email?.split('@')[0] || 'Unknown',
-              connect_me: user.email,
-              photoURL: photoURL || 'https://we.alearn.org.tw/logo-new.png',
-              login_method: 'google'
-            });
+          const isMember = await axios.get(`https://knowledge-base-backend.leechiuhui.workers.dev/is_member_email/${user.email}`);
+          console.log('isMember', isMember);
+          if (isMember.data.isMember === false) {
+            alert('您不是創源工具的會員，請聯絡管理員。');
+            this.logout();
+            return;
           } else {
-            console.log('user already exists')
-            if (snapshot.val().photoURL !== photoURL) {
-              await set(dbRef(database, 'users/' + user.uid + '/photoURL'), photoURL);
-            }
-          }
+            this.role = isMember.data.role;
+            console.log('user', user)
+            console.log('photoURL', photoURL)
+            // 更新用戶資料到 Firebase Database
+            const userRef = dbRef(database, 'users/' + user.uid);
+            const snapshot = await get(userRef);
 
-          this.updateUserData(user);
-          this.showLogin = false;
+            if (!snapshot.exists()) {
+              await set(userRef, {
+                email: user.email,
+                name: user.displayName || user.email?.split('@')[0] || 'Unknown',
+                connect_me: user.email,
+                photoURL: photoURL || 'https://we.alearn.org.tw/logo-new.png',
+                login_method: 'google'
+              });
+            } else {
+              console.log('user already exists')
+              if (snapshot.val().photoURL !== photoURL) {
+                await set(dbRef(database, 'users/' + user.uid + '/photoURL'), photoURL);
+              }
+            }
+
+            this.updateUserData(user);
+            this.showLogin = false;
+          }
         } catch (error: any) {
           console.error("Google登入失敗：", error);
           alert("Google登入失敗：" + error.message);
