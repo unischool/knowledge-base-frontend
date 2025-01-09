@@ -1,0 +1,1 @@
+import{c as n,a as o,o as t,_ as a}from"./index-BDVitznL.js";function r(c,e){return t(),n("main",null,e[0]||(e[0]=[o("h1",null,"Under Construction ...",-1)]))}const s={},l=a(s,[["render",r],["__scopeId","data-v-00574bd1"]]);export{l as default};
